@@ -5,6 +5,9 @@
 
 namespace Vube\GChart\DataSource\DataTable;
 
+use Vube\GChart\DataSource\DataTable\Value\Value;
+use Vube\GChart\DataSource\DataTable\Value\ValueType;
+
 
 /**
  * TableCell class
@@ -14,7 +17,7 @@ namespace Vube\GChart\DataSource\DataTable;
 class TableCell
 {
 	/**
-	 * @var mixed
+	 * @var Value
 	 */
 	private $value;
 	/**
@@ -31,7 +34,7 @@ class TableCell
 	 * @param null|string $formattedValue
 	 * @param array $customProperties
 	 */
-	public function __construct($value, $formattedValue=null, array $customProperties=array())
+	public function __construct(Value $value, $formattedValue=null, array $customProperties=array())
 	{
 		$this->value = $value;
 		$this->formattedValue = $formattedValue;
@@ -39,11 +42,19 @@ class TableCell
 	}
 
 	/**
-	 * @return mixed
+	 * @return Value
 	 */
 	public function getValue()
 	{
 		return $this->value;
+	}
+
+	/**
+	 * @return ValueType
+	 */
+	public function getValueType()
+	{
+		return $this->value->getType();
 	}
 
 	/**

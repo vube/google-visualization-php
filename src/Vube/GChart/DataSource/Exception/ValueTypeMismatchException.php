@@ -5,7 +5,7 @@
 
 namespace Vube\GChart\DataSource\Exception;
 
-use Vube\GChart\DataSource\DataTable\ValueType;
+use Vube\GChart\DataSource\DataTable\Value\ValueType;
 use Vube\GChart\DataSource\Exception;
 
 
@@ -25,7 +25,7 @@ class ValueTypeMismatchException extends Exception
 	 */
 	public function __construct(ValueType $expectedType, $columnIndex = 0, \Exception $previous = null)
 	{
-		$message = "Value type mismatch, expected ".$expectedType->getTypeId();
+		$message = "Value type mismatch, expected ".$expectedType->getCode();
 
 		parent::__construct($message, $columnIndex, $previous);
 	}

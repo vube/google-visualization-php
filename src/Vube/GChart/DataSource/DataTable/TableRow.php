@@ -18,6 +18,10 @@ class TableRow
 	 */
 	private $cells = array();
 	/**
+	 * @var int
+	 */
+	private $numCells = 0;
+	/**
 	 * @var array
 	 */
 	private $customProperties = array();
@@ -35,9 +39,9 @@ class TableRow
 	/**
 	 * @return int
 	 */
-	public function getCellCount()
+	public function getNumberOfCells()
 	{
-		return count($this->cells);
+		return $this->numCells;
 	}
 
 	/**
@@ -47,7 +51,7 @@ class TableRow
 	 */
 	public function getCell($index)
 	{
-		if($index < 0 || $index >= count($this->cells))
+		if($index < 0 || $index >= $this->numCells)
 			throw new IndexOutOfBoundsException($index);
 
 		return $this->cells[$index];
@@ -62,6 +66,7 @@ class TableRow
 			$cell = new TableCell($cell);
 
 		$this->cells[] = $cell;
+		$this->numCells++;
 	}
 
 	/**

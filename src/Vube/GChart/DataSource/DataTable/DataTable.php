@@ -4,12 +4,13 @@
  */
 
 namespace Vube\GChart\DataSource\DataTable;
+
+use Vube\GChart\DataSource\Base\Warning;
 use Vube\GChart\DataSource\Exception;
 use Vube\GChart\DataSource\Exception\ColumnCountMismatchException;
 use Vube\GChart\DataSource\Exception\IndexOutOfBoundsException;
 use Vube\GChart\DataSource\Exception\NoSuchColumnIdException;
 use Vube\GChart\DataSource\Exception\ValueTypeMismatchException;
-use Vube\GChart\DataSource\Warning;
 
 
 /**
@@ -40,6 +41,17 @@ class DataTable
 		return $this->warnings;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getNumberOfWarnings()
+	{
+		return count($this->warnings);
+	}
+
+	/**
+	 * @param Warning $warning
+	 */
 	public function addWarning(Warning $warning)
 	{
 		$this->warnings[] = $warning;
@@ -74,7 +86,7 @@ class DataTable
 		// Check to make sure the number of columns in the row
 		// matches the number of columns in our table
 
-		$rowCellCount = $row->getCellCount();
+		$rowCellCount = $row->getNumberOfCells();
 		if($rowCellCount != $this->columnCount)
 			throw new ColumnCountMismatchException($this->columnCount, $rowCellCount);
 
@@ -84,12 +96,10 @@ class DataTable
 		$cells = $row->getCells();
 		for($i=0; $i<$this->columnCount; $i++)
 		{
-			$column = $this->columns[$i];
-			$columnDataType = $column->getType();
-			$cell = $cells[$i];
-			$cellValue = $cell->getValue();
+			$columnDataType = $this->columns[$i]->getType();
+			$cellValueType = $cells[$i]->getValue()->getType();
 
-			if(! $columnDataType->isSameDataType($cellValue))
+			if($columnDataType->getCode() != $cellValueType->getCode())
 				throw new ValueTypeMismatchException($columnDataType, $i);
 		}
 

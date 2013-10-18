@@ -18,20 +18,38 @@ use Vube\GChart\DataSource\Exception\TypeMismatchException;
  */
 class RequestParameters
 {
+	const REQUEST_ID_PARAMETER = 'reqId';
+	const VERSION_PARAMETER = 'version';
+	const SIGNATURE_PARAMETER = 'sig';
 	const OUTPUT_TYPE_PARAMETER = 'out';
-	const OUTPUT_FILE_NAME_PARAMETER = 'outFileName';
 	const RESPONSE_HANDLER_PARAMETER = 'responseHandler';
-
-	private $params;
+	const OUTPUT_FILE_NAME_PARAMETER = 'outFileName';
 
 	static private $knownParameters = array(
-		'reqId' => false,
-		'version' => '0.6',
-		'sig' => false,
-		'out' => 'json',
-		'responseHandler' => 'google.visualization.Query.setResponse',
-		'outFileName' => false,
+		self::REQUEST_ID_PARAMETER => false, // no default value
+		self::VERSION_PARAMETER => '0.6',
+		self::SIGNATURE_PARAMETER => false, // no default value
+		self::OUTPUT_TYPE_PARAMETER => 'json',
+		self::RESPONSE_HANDLER_PARAMETER => 'google.visualization.Query.setResponse',
+		self::OUTPUT_FILE_NAME_PARAMETER => false, // no default value
 	);
+
+	/**
+	 * Parameters effective during this request
+	 *
+	 * Once initialized by the constructor or by a subsequent
+	 * call to set(), this is an assoc array containing ALL known
+	 * parameters, whether or not they were explicitly set by the
+	 * client.
+	 *
+	 * A value of boolean false means the client did NOT set the
+	 * parameter AND there is no default value for this parameter.
+	 *
+	 * All values will be strings if they are not boolean false.
+	 *
+	 * @var array
+	 */
+	private $params;
 
 	/**
 	 * Constructor
@@ -53,7 +71,7 @@ class RequestParameters
 
 	/**
 	 * @param string $name Name of the parameter whose value to return.
-	 * @return string|false Value of the parameter if it has one, else FALSE
+	 * @return false|string Value of the parameter if it has one, else FALSE
 	 * if the parameter was not set and has no default value.
 	 * @throws NoSuchParameterException if $name is not a valid parameter name.
 	 */
@@ -106,6 +124,8 @@ class RequestParameters
 		}
 
 		// Assign default values for any parameters that were not explicitly set
+		// Note that the default value may === false, which hereafter means
+		// the var was not set explicitly and also has no default value.
 		foreach(self::$knownParameters as $name => $default)
 		{
 			if(! isset($this->params[$name]))

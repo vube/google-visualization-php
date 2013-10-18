@@ -7,7 +7,7 @@ namespace Vube\GChart\DataSource\test;
 
 use Vube\GChart\DataSource\DataTable\ColumnDescription;
 use Vube\GChart\DataSource\DataTable\DataTable;
-use Vube\GChart\DataSource\DataTable\ValueType;
+use Vube\GChart\DataSource\DataTable\Value\ValueType;
 use Vube\GChart\DataSource\OutputType;
 use Vube\GChart\DataSource\Render\iRenderer;
 use Vube\GChart\DataSource\Render\JsonRenderer;

@@ -4,8 +4,9 @@
  */
 
 namespace Vube\GChart\DataSource\DataTable\test;
+
 use Vube\GChart\DataSource\DataTable\ColumnDescription;
-use Vube\GChart\DataSource\DataTable\ValueType;
+use Vube\GChart\DataSource\DataTable\Value\ValueType;
 
 
 /**
@@ -20,7 +21,7 @@ class ColumnDescriptionTest extends \PHPUnit_Framework_TestCase
 		$cd = new ColumnDescription('columnName', ValueType::NUMBER, 'pretty column label');
 
 		$this->assertSame('columnName', $cd->getId(), "id must match");
-		$this->assertSame(ValueType::NUMBER, $cd->getType()->getTypeId(), "type must match");
+		$this->assertSame(ValueType::NUMBER, $cd->getType()->getCode(), "type must match");
 		$this->assertSame('pretty column label', $cd->getLabel(), "label must match");
 		$this->assertSame('', $cd->getPattern(), "Default pattern is empty string");
 	}

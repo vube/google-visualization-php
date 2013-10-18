@@ -6,6 +6,7 @@
 namespace Vube\GChart\DataSource\DataTable\test;
 use Vube\GChart\DataSource\DataTable\TableCell;
 use Vube\GChart\DataSource\DataTable\TableRow;
+use Vube\GChart\DataSource\DataTable\Value\TextValue;
 
 
 /**
@@ -23,7 +24,7 @@ class TableRowTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue(is_array($rows), "cells must be an array");
 		$this->assertEquals(0, count($rows), "cells must be an empty array");
-		$this->assertSame(0, $row->getCellCount(), "getCellCount must return zero");
+		$this->assertSame(0, $row->getNumberOfCells(), "getNumberOfCells must return zero");
 		$this->assertTrue(is_array($properties), "properties must be an array");
 		$this->assertEquals(0, count($properties), "properties must be an empty array");
 	}
@@ -48,54 +49,54 @@ class TableRowTest extends \PHPUnit_Framework_TestCase
 	public function testAddCell()
 	{
 		$row = new TableRow();
-		$row->addCell(new TableCell('a'));
-		$row->addCell(new TableCell('b'));
+		$row->addCell(new TableCell(new TextValue('a')));
+		$row->addCell(new TableCell(new TextValue('b')));
 
-		$this->assertSame(2, $row->getCellCount(), "getCellCount must return expected result");
+		$this->assertSame(2, $row->getNumberOfCells(), "getNumberOfCells must return expected result");
 
 		$cell0 = $row->getCell(0);
 		$cell1 = $row->getCell(1);
 
-		$this->assertSame('a', $cell0->getValue(), "first cell value must match");
-		$this->assertSame('b', $cell1->getValue(), "second cell value must match");
+		$this->assertSame('a', $cell0->getValue()->getValue(), "first cell value must match");
+		$this->assertSame('b', $cell1->getValue()->getValue(), "second cell value must match");
 	}
 
 	public function testAddCellWithRawValue()
 	{
 		$row = new TableRow();
-		$row->addCell('value');
+		$row->addCell(new TextValue('value'));
 
-		$this->assertSame(1, $row->getCellCount(), "getCellCount must return expected result");
+		$this->assertSame(1, $row->getNumberOfCells(), "getNumberOfCells must return expected result");
 
 		$cell0 = $row->getCell(0);
 
-		$this->assertSame('value', $cell0->getValue(), "cell value must match");
+		$this->assertSame('value', $cell0->getValue()->getValue(), "cell value must match");
 	}
 
 	public function testSetCell()
 	{
 		$row = new TableRow();
-		$row->addCell(new TableCell('add value'));
-		$row->setCell(0, new TableCell('set value'));
+		$row->addCell(new TableCell(new TextValue('add value')));
+		$row->setCell(0, new TableCell(new TextValue('set value')));
 
-		$this->assertSame(1, $row->getCellCount(), "getCellCount must return expected result");
+		$this->assertSame(1, $row->getNumberOfCells(), "getNumberOfCells must return expected result");
 
 		$cell0 = $row->getCell(0);
 
-		$this->assertSame('set value', $cell0->getValue(), "cell value must match");
+		$this->assertSame('set value', $cell0->getValue()->getValue(), "cell value must match");
 	}
 
 	public function testSetCellWithRawValue()
 	{
 		$row = new TableRow();
-		$row->addCell('add value');
-		$row->setCell(0, 'set value');
+		$row->addCell(new TextValue('add value'));
+		$row->setCell(0, new TextValue('set value'));
 
-		$this->assertSame(1, $row->getCellCount(), "getCellCount must return expected result");
+		$this->assertSame(1, $row->getNumberOfCells(), "getNumberOfCells must return expected result");
 
 		$cell0 = $row->getCell(0);
 
-		$this->assertSame('set value', $cell0->getValue(), "cell value must match");
+		$this->assertSame('set value', $cell0->getValue()->getValue(), "cell value must match");
 	}
 
 	public function testGetCellInvalidIndex()

@@ -5,6 +5,8 @@
 
 namespace Vube\GChart\DataSource\DataTable;
 
+use Vube\GChart\DataSource\DataTable\Value\ValueType;
+
 
 /**
  * ColumnDescription class
@@ -37,7 +39,7 @@ class ColumnDescription
 	/**
 	 * Constructor
 	 * @param string $id
-	 * @param ValueType|string $type
+	 * @param ValueType|int $type
 	 * @param string $label
 	 */
 	public function __construct($id, $type, $label='')

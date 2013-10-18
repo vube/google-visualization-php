@@ -5,6 +5,8 @@
 
 namespace Vube\GChart\DataSource;
 
+use Vube\GChart\DataSource\Base\ResponseStatus;
+use Vube\GChart\DataSource\Base\StatusType;
 use Vube\GChart\DataSource\DataTable\DataTable;
 use Vube\GChart\DataSource\Exception\NotImplementedException;
 use Vube\GChart\DataSource\Render\iRenderer;
@@ -18,7 +20,13 @@ use Vube\GChart\DataSource\Render\JsonRenderer;
  */
 class Response {
 
+	/**
+	 * @var Request
+	 */
 	private $request;
+	/**
+	 * @var DataTable
+	 */
 	private $data;
 
 	public function __construct(Request $request)
@@ -93,7 +101,13 @@ class Response {
 	{
 		$renderer = $this->getRenderer();
 
-		$output = $renderer->render($this);
+		// If there were any warnings generating this DataTable, we must send them
+		// in the response and set the response status to WARNING
+		$responseStatus = null;
+		if($this->data->getNumberOfWarnings() > 0)
+			$responseStatus = new ResponseStatus(new StatusType(StatusType::WARNING));
+
+		$output = $renderer->render($this, $responseStatus);
 		return $output;
 	}
 }

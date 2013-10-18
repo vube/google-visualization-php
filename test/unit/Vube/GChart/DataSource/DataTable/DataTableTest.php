@@ -4,11 +4,16 @@
  */
 
 namespace Vube\GChart\DataSource\DataTable\test;
+
+use Vube\GChart\DataSource\Base\ReasonType;
+use Vube\GChart\DataSource\Base\Warning;
 use Vube\GChart\DataSource\DataTable\ColumnDescription;
 use Vube\GChart\DataSource\DataTable\DataTable;
 use Vube\GChart\DataSource\DataTable\TableCell;
 use Vube\GChart\DataSource\DataTable\TableRow;
-use Vube\GChart\DataSource\DataTable\ValueType;
+use Vube\GChart\DataSource\DataTable\Value\NumberValue;
+use Vube\GChart\DataSource\DataTable\Value\TextValue;
+use Vube\GChart\DataSource\DataTable\Value\ValueType;
 
 
 /**
@@ -24,8 +29,22 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertSame(0, $data->getNumberOfColumns(), "data must contain zero columns");
 		$this->assertSame(0, $data->getNumberOfRows(), "data must contain zero rows");
+		$this->assertSame(0, $data->getNumberOfWarnings(), "data must contain zero warnings");
 		$this->assertSame(array(), $data->getColumnDescriptions(), "column descriptions array must be empty array");
 		$this->assertSame(array(), $data->getWarnings(), "data must contain zero warnings");
+	}
+
+	public function testAddWarning()
+	{
+		$data = new DataTable();
+		$warning = new Warning(new ReasonType(ReasonType::INVALID_QUERY), "invalid query");
+		$data->addWarning($warning);
+
+		$warnings = $data->getWarnings();
+
+		$this->assertSame(1, $data->getNumberOfWarnings(), "data must contain zero warnings");
+		$this->assertSame(1, count($warnings), "warnings array must contain 1 element");
+		$this->assertSame($warning, $warnings[0], "Returned warning must match input warning");
 	}
 
 	public function testAddColumn()
@@ -103,7 +122,7 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 	{
 		$data = new DataTable();
 		$row = new TableRow();
-		$row->addCell('test');
+		$row->addCell(new TextValue('test'));
 
 		$this->setExpectedException('\\Vube\\GChart\\DataSource\\Exception');
 		$data->addRow($row);
@@ -114,7 +133,7 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		$data = new DataTable();
 		$data->addColumn(new ColumnDescription('first', ValueType::STRING));
 		$row = new TableRow();
-		$row->addCell(new TableCell('value1'));
+		$row->addCell(new TableCell(new TextValue('value1')));
 		$data->addRow($row);
 
 		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
@@ -135,8 +154,8 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		$data = new DataTable();
 		$data->addColumn(new ColumnDescription('first', ValueType::STRING));
 		$row = new TableRow();
-		$row->addCell(new TableCell('value1'));
-		$row->addCell(new TableCell('value2'));
+		$row->addCell(new TableCell(new TextValue('value1')));
+		$row->addCell(new TableCell(new TextValue('value2')));
 
 		$this->setExpectedException('\\Vube\\GChart\\DataSource\\Exception\\ColumnCountMismatchException');
 		$data->addRow($row);
@@ -147,7 +166,7 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		$data = new DataTable();
 		$data->addColumn(new ColumnDescription('first', ValueType::STRING));
 		$row = new TableRow();
-		$row->addCell(new TableCell(null));
+		$row->addCell(new TableCell(new NumberValue(0)));
 
 		$this->setExpectedException('\\Vube\\GChart\\DataSource\\Exception\\ValueTypeMismatchException');
 		$data->addRow($row);
@@ -160,7 +179,7 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		for($i=0; $i<$count; $i++)
 		{
 			$row = new TableRow();
-			$row->addCell(new TableCell($i));
+			$row->addCell(new TableCell(new NumberValue($i)));
 			$rows[] = $row;
 		}
 
@@ -179,7 +198,7 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		for($i=0; $i<$count; $i++)
 		{
 			$row = new TableRow();
-			$row->addCell(new TableCell($i));
+			$row->addCell(new TableCell(new NumberValue($i)));
 			$rows[] = $row;
 		}
 
@@ -197,7 +216,7 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		$data = new DataTable();
 		$data->addColumn(new ColumnDescription('first', ValueType::STRING));
 		$row = new TableRow();
-		$row->addCell(new TableCell('value1'));
+		$row->addCell(new TableCell(new TextValue('value1')));
 		$data->addRow($row);
 
 		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
@@ -225,8 +244,8 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		for($i=0; $i<$count; $i++)
 		{
 			$row = new TableRow();
-			$row->addCell(new TableCell('a'.$i));
-			$row->addCell(new TableCell('b'.$i));
+			$row->addCell(new TableCell(new TextValue('a'.$i)));
+			$row->addCell(new TableCell(new TextValue('b'.$i)));
 			$rows[] = $row;
 		}
 

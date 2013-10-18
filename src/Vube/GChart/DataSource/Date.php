@@ -4,6 +4,7 @@
  */
 
 namespace Vube\GChart\DataSource;
+use Vube\GChart\DataSource\Exception\InvalidDateFormatException;
 
 
 /**
@@ -11,10 +12,20 @@ namespace Vube\GChart\DataSource;
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class Date
+class Date extends \DateTime
 {
-	public function __construct()
+	/**
+	 * @param int|string $time [optional]
+	 * @param \DateTimeZone $timezone [optional] UTC by default
+	 */
+	public function __construct($time = "now", \DateTimeZone $timezone = null)
 	{
-		// TODO
+		if(is_int($time))
+			$time = '@'.$time;
+
+		if($timezone === null)
+			$timezone = new \DateTimeZone('UTC');
+
+		parent::__construct($time, $timezone);
 	}
 }

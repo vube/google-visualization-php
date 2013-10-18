@@ -46,7 +46,7 @@ class Request
 	}
 
 	/**
-	 * @return null|string
+	 * @return string
 	 */
 	public function getQuery()
 	{
@@ -62,7 +62,26 @@ class Request
 	}
 
 	/**
+	 * @return false|string
+	 */
+	public function getRequestId()
+	{
+		$id = $this->params->getParameter(RequestParameters::REQUEST_ID_PARAMETER);
+		return $id; // may be false
+	}
+
+	/**
+	 * @return false|string
+	 */
+	public function getSignature()
+	{
+		$sig = $this->params->getParameter(RequestParameters::SIGNATURE_PARAMETER);
+		return $sig;
+	}
+
+	/**
 	 * @return OutputType
+	 * @throws Exception if you haven't called setParams() before calling this method
 	 */
 	public function getOutputType()
 	{
