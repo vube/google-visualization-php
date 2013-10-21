@@ -247,16 +247,14 @@ class JsonRenderer implements iRenderer {
 	{
 		$output = "{";
 		$output .= "\"id\":".json_encode($column->getId());
-		$label = $column->getLabel();
-		if($label !== '')
-			$output .= ",\"label\":".json_encode($label);
+		$output .= ",\"label\":".json_encode($column->getLabel());
 		$output .= ",\"type\":".json_encode($column->getType()->getTypeName());
-		$pattern = $column->getPattern();
-		if($pattern !== '')
-			$output .= ",\"pattern\":".json_encode($pattern);
+		$output .= ",\"pattern\":".json_encode($column->getPattern());
+
 		$customProperties = $this->renderCustomPropertiesString($column->getCustomProperties());
 		if($customProperties !== null)
 			$output .= ",\"p\":".$customProperties;
+
 		$output .= "}";
 		return $output;
 	}

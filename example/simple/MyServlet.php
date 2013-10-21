@@ -49,18 +49,23 @@ class MyServlet extends Servlet {
 	{
 		$data = new DataTable();
 
-		$data->addColumn(new ColumnDescription('date', ValueType::DATE));
-		$data->addColumn(new ColumnDescription('income', ValueType::NUMBER));
-		$data->addColumn(new ColumnDescription('expense', ValueType::NUMBER));
+		$data->addColumn(new ColumnDescription('date', ValueType::DATE, 'Date'));
+		$data->addColumn(new ColumnDescription('income', ValueType::NUMBER, 'Gross Income'));
+		$data->addColumn(new ColumnDescription('expense', ValueType::NUMBER, 'Expenses'));
+		$data->addColumn(new ColumnDescription('net', ValueType::NUMBER, 'Net Income'));
 
 		for($i=0; $i<10; $i++)
 		{
 			$row = new TableRow();
 
-			$date = "2013-01-".sprintf("%02d",$i);
+			$date = "2013-01-".sprintf("%02d",1+$i);
+			$income = 1000+rand(0,(1+$i)*10);
+			$expense = -800-rand(0,(1+$i)*10);
+
 			$row->addCell(new TableCell(new DateValue(new Date($date))));
-			$row->addCell(new TableCell(new NumberValue(1000+rand(0,(1+$i)*10))));
-			$row->addCell(new TableCell(new NumberValue(-900-rand(0,(1+$i)*10))));
+			$row->addCell(new TableCell(new NumberValue($income)));
+			$row->addCell(new TableCell(new NumberValue($expense)));
+			$row->addCell(new TableCell(new NumberValue($income+$expense)));
 
 			$data->addRow($row);
 		}

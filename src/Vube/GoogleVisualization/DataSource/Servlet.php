@@ -36,6 +36,11 @@ abstract class Servlet {
 	abstract public function getDataTable(Request $request);
 
 	/**
+	 * Constructor
+	 */
+	public function __construct() {}
+
+	/**
 	 * @return Request
 	 */
 	public function constructRequest()

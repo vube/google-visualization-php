@@ -211,7 +211,7 @@ class JsonRendererTest extends \PHPUnit_Framework_TestCase {
 
 	public function testColumnDescriptionJsonWithEmptyLabelAndEmptyPattern()
 	{
-		$expected = '{"id":"foo","type":"string"}';
+		$expected = '{"id":"foo","label":"","type":"string","pattern":""}';
 
 		$cd = new ColumnDescription('foo', ValueType::STRING);
 		$renderer = new JsonRenderer();
@@ -222,7 +222,7 @@ class JsonRendererTest extends \PHPUnit_Framework_TestCase {
 
 	public function testColumnDescriptionJsonWithEmptyPattern()
 	{
-		$expected = '{"id":"foo","type":"date","pattern":"YYYY-mm-dd"}';
+		$expected = '{"id":"foo","label":"","type":"date","pattern":"YYYY-mm-dd"}';
 
 		$cd = new ColumnDescription('foo', ValueType::DATE);
 		$cd->setPattern('YYYY-mm-dd');
@@ -428,7 +428,7 @@ class JsonRendererTest extends \PHPUnit_Framework_TestCase {
 
 	public function testRenderWithDataReturnsExpectedJson()
 	{
-		$expected = '{"version":"0.6","status":"ok","sig":"64bc093622add54643a29199ec583dc8","table":{"cols":[{"id":"date","type":"date"},{"id":"name","type":"string"},{"id":"count","type":"number"}],"rows":[{"c":[{"v":"Date(2013,9,19)"},{"v":"eleven"},{"v":11}]},{"c":[{"v":"Date(2013,0,1)"},{"v":"twenty_three"},{"v":23}]},{"c":[{"v":"Date(2013,6,1)"},{"v":null},{"v":35}]},{"c":[{"v":"Date(1999,11,31)"},{"v":"null_value"},{"v":null}]}]}}';
+		$expected = '{"version":"0.6","status":"ok","sig":"85b89be6e5a64b7c15818a468cfaa985","table":{"cols":[{"id":"date","label":"","type":"date","pattern":""},{"id":"name","label":"","type":"string","pattern":""},{"id":"count","label":"","type":"number","pattern":""}],"rows":[{"c":[{"v":"Date(2013,9,19)"},{"v":"eleven"},{"v":11}]},{"c":[{"v":"Date(2013,0,1)"},{"v":"twenty_three"},{"v":23}]},{"c":[{"v":"Date(2013,6,1)"},{"v":null},{"v":35}]},{"c":[{"v":"Date(1999,11,31)"},{"v":"null_value"},{"v":null}]}]}}';
 		$renderer = new JsonRenderer();
 		$actual = $renderer->render($this->response);
 
@@ -437,7 +437,7 @@ class JsonRendererTest extends \PHPUnit_Framework_TestCase {
 
 	public function testRenderWithDataReturnsExpectedJsonWithOptimizedNulls()
 	{
-		$expected = '{"version":"0.6","status":"ok","sig":"64bc093622add54643a29199ec583dc8","table":{"cols":[{"id":"date","type":"date"},{"id":"name","type":"string"},{"id":"count","type":"number"}],"rows":[{"c":[{"v":"Date(2013,9,19)"},{"v":"eleven"},{"v":11}]},{"c":[{"v":"Date(2013,0,1)"},{"v":"twenty_three"},{"v":23}]},{"c":[{"v":"Date(2013,6,1)"},,{"v":35}]},{"c":[{"v":"Date(1999,11,31)"},{"v":"null_value"},{"v":null}]}]}}';
+		$expected = '{"version":"0.6","status":"ok","sig":"85b89be6e5a64b7c15818a468cfaa985","table":{"cols":[{"id":"date","label":"","type":"date","pattern":""},{"id":"name","label":"","type":"string","pattern":""},{"id":"count","label":"","type":"number","pattern":""}],"rows":[{"c":[{"v":"Date(2013,9,19)"},{"v":"eleven"},{"v":11}]},{"c":[{"v":"Date(2013,0,1)"},{"v":"twenty_three"},{"v":23}]},{"c":[{"v":"Date(2013,6,1)"},,{"v":35}]},{"c":[{"v":"Date(1999,11,31)"},{"v":"null_value"},{"v":null}]}]}}';
 		$renderer = new JsonRenderer(true);
 		$actual = $renderer->render($this->response);
 
