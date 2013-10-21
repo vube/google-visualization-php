@@ -1,5 +1,5 @@
 {
-	"name": "vube/php-gchart-datasource",
+	"name": "vube/google-visualization-php",
 	"type": "library",
 	"description": "Google Charts data source implementation in PHP",
 	"keywords": ["vube", "Google Charts", "data source", "php library"],

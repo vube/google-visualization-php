@@ -7,7 +7,7 @@
 		>
 
 	<testsuites>
-		<testsuite name="php-gchart-datasource Unit Tests">
+		<testsuite name="google-visualization-php Unit Tests">
 			<directory phpVersion="5.3.0" phpVersionOperator=">=">test/unit</directory>
 		</testsuite>
 	</testsuites>

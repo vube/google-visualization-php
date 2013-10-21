@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
-	<title><![CDATA[vube/php-gchart-datasource]]></title>
+	<title><![CDATA[vube/google-visualization-php]]></title>
 	<parser>
 		<target>build/phpdoc</target>
 		<markers>
