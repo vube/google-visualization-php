@@ -138,7 +138,7 @@ class ServletTest extends \PHPUnit_Framework_TestCase {
 	{
 		$servlet = new MockInternalErrorServlet();
 		$servlet->setRestrictedAccessMode(false);
-		$writer = $servlet->generateResponseWriter();
+		$writer = $servlet->constructResponseWriter();
 
 		$this->assertTrue($writer instanceof ResponseWriter,
 			"Expect a ResponseWriter object to be returned");
