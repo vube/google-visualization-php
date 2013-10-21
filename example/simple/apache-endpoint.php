@@ -7,7 +7,7 @@
  * the response to the client.
  *
  * If you have your own autoloader, remove the autoloader.php require
- * below and make sure you can lose Vube\GChart\DataSource\*
+ * below and make sure you can lose Vube\GoogleVisualization\DataSource\*
  *
  * @author Ross Perkins <ross@vubeology.com>
  */
@@ -15,7 +15,7 @@
 try
 {
 	// Enable autoloader of Vube source (only if you don't have your own)
-	require_once '../../src/Vube/GChart/DataSource/autoload.php';
+	require_once '../../src/Vube/GoogleVisualization/DataSource/autoload.php';
 
 	// Enable autoloader of your own source, or include it directly
 	require_once './MyServlet.php';

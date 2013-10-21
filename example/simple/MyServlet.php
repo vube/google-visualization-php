@@ -8,16 +8,16 @@
  * @author Ross Perkins <ross@vubeology.com>
  */
 
-use Vube\GChart\DataSource\DataTable\ColumnDescription;
-use Vube\GChart\DataSource\DataTable\DataTable;
-use Vube\GChart\DataSource\DataTable\TableCell;
-use Vube\GChart\DataSource\DataTable\TableRow;
-use Vube\GChart\DataSource\DataTable\Value\DateValue;
-use Vube\GChart\DataSource\DataTable\Value\NumberValue;
-use Vube\GChart\DataSource\DataTable\Value\ValueType;
-use Vube\GChart\DataSource\Date;
-use Vube\GChart\DataSource\Request;
-use Vube\GChart\DataSource\Servlet;
+use Vube\GoogleVisualization\DataSource\DataTable\ColumnDescription;
+use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
+use Vube\GoogleVisualization\DataSource\DataTable\TableCell;
+use Vube\GoogleVisualization\DataSource\DataTable\TableRow;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
+use Vube\GoogleVisualization\DataSource\Date;
+use Vube\GoogleVisualization\DataSource\Request;
+use Vube\GoogleVisualization\DataSource\Servlet;
 
 /**
  * MyServlet class

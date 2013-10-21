@@ -21,6 +21,6 @@
 	},
 	"minimum-stability": "dev",
 	"autoload": {
-		"psr-0": {"Vube\\GChart\\DataSource\\": "src/"}
+		"psr-0": {"Vube\\GoogleVisualization\\DataSource\\": "src/"}
 	}
 }
