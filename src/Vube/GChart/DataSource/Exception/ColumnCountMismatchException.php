@@ -4,6 +4,7 @@
  */
 
 namespace Vube\GChart\DataSource\Exception;
+
 use Vube\GChart\DataSource\Exception;
 
 

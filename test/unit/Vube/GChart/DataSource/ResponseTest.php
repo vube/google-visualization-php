@@ -8,6 +8,7 @@ namespace Vube\GChart\DataSource\test;
 use Vube\GChart\DataSource\DataTable\ColumnDescription;
 use Vube\GChart\DataSource\DataTable\DataTable;
 use Vube\GChart\DataSource\DataTable\Value\ValueType;
+use Vube\GChart\DataSource\Exception;
 use Vube\GChart\DataSource\OutputType;
 use Vube\GChart\DataSource\Render\iRenderer;
 use Vube\GChart\DataSource\Render\JsonRenderer;
@@ -25,6 +26,13 @@ class MockRenderer implements iRenderer {
 		return $this->getOutput($this->renderCount);
 	}
 };
+
+
+class MockBrokenRenderer implements iRenderer {
+	public function render(Response $response) {
+		throw new Exception("Renderer is broken for test purposes");
+	}
+}
 
 
 /**
@@ -168,5 +176,21 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
 		$expected = $mockRenderer->getOutput(1);
 		$output = $response->__toString();
 		$this->assertSame($expected, $output, "Response->__toString should return rendered output");
+	}
+
+	public function testExceptionDuringRenderIsCaughtAndPropagated()
+	{
+		$mockRenderer = new MockBrokenRenderer();
+		$request = new Request();
+
+		// A response that uses the MockRenderer to generate output
+		$response = $this->getMock('\\Vube\\GChart\\DataSource\\Response',
+			array('getRenderer'), array($request));
+		$response->expects($this->once())
+			->method('getRenderer')
+			->will($this->returnValue($mockRenderer));
+
+		$this->setExpectedException('\\Vube\\GChart\\DataSource\\Exception\\RenderFailureException');
+		$output = $response->__toString();
 	}
 }

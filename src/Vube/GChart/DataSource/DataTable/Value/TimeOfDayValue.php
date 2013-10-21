@@ -24,7 +24,8 @@ class TimeOfDayValue extends Value {
 	{
 		$output = $this->value->format("H:i:s");
 		$millis = $this->value->getMilliseconds();
-		$output .= ".".$millis;
+		if($millis > 0)
+			$output .= ".".sprintf("%03d", $millis);
 		return $output;
 	}
 }

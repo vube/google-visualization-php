@@ -24,7 +24,8 @@ class DateTimeValue extends Value {
 	{
 		$output = $this->value->format("Y-m-d H:i:s");
 		$millis = $this->value->getMilliseconds();
-		$output .= ".".$millis;
+		if($millis > 0)
+			$output .= ".".sprintf("%03d", $millis);
 		return $output;
 	}
 }

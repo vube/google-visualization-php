@@ -75,7 +75,7 @@ class ResponseWriter {
 	 */
 	protected function sendHeader($name, $value)
 	{
-		header($name.": ".$value);
+		@header($name.": ".$value);
 	}
 
 	/**

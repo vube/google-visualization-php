@@ -5,6 +5,8 @@
 
 namespace Vube\GChart\DataSource\Base;
 
+use Vube\GChart\DataSource\Exception\InvalidReasonTypeException;
+
 
 /**
  * ReasonType class
@@ -77,16 +79,19 @@ class ReasonType {
 	 */
 	const OTHER = 'other';
 
-	private $type;
+	/**
+	 * @var string
+	 */
+	private $code;
 
 	/**
-	 * @param string $type Must be one of the constants described above
-	 * @throws Exception if $type is not a recognized type string
+	 * @param string $code Must be one of the constants described above
+	 * @throws Exception if $code is not a recognized code string
 	 */
-	public function __construct($type)
+	public function __construct($code)
 	{
-		$this->validateType($type);
-		$this->type = $type;
+		self::validateType($code);
+		$this->code = $code;
 	}
 
 	/**
@@ -94,16 +99,16 @@ class ReasonType {
 	 */
 	public function getCode()
 	{
-		return $this->type;
+		return $this->code;
 	}
 
 	/**
-	 * @param string $type
-	 * @throws Exception if $type is not a recognized type string
+	 * @param string $code
+	 * @throws Exception if $code is not a recognized code string
 	 */
-	public function validateType($type)
+	public static function validateType($code)
 	{
-		switch($type)
+		switch($code)
 		{
 			case self::ACCESS_DENIED:
 			case self::USER_NOT_AUTHENTICATED:
@@ -121,20 +126,20 @@ class ReasonType {
 
 			// Anything else is not a valid ReasonType
 			default:
-				throw new Exception("Invalid ReasonType: ".$type);
+				throw new InvalidReasonTypeException($code);
 		}
 	}
 
 	/**
-	 * @param string $type [optional]
+	 * @param string $code [optional]
 	 * @return string
 	 */
-	public function getMessage($type=null)
+	public function getMessage($code=null)
 	{
-		if($type === null)
-			$type = $this->type;
+		if($code === null)
+			$code = $this->code;
 
 		// I18N: Allow for translations; for now we just convert code->English
-		return str_replace('_', ' ', $type);
+		return str_replace('_', ' ', $code);
 	}
 }

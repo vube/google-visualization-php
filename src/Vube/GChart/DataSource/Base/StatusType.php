@@ -38,7 +38,7 @@ class StatusType {
 	 */
 	public function __construct($type)
 	{
-		$this->validateType($type);
+		self::validateType($type);
 		$this->type = $type;
 	}
 
@@ -54,7 +54,7 @@ class StatusType {
 	 * @param string $type
 	 * @throws Exception if $type is not a recognized type string
 	 */
-	public function validateType($type)
+	public static function validateType($type)
 	{
 		if($type !== self::OK &&
 			$type !== self::ERROR &&

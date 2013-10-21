@@ -23,14 +23,11 @@ class BooleanValue extends Value {
 	 */
 	public function __toString()
 	{
-		if($this->value === true)
-			return 'true';
-		else if($this->value === false)
-			return 'false';
-		else if($this->value === null)
+		// Handle null specially
+		if($this->value === null)
 			return 'null';
 
-		// implicit cast to boolean
+		// All other values implicitly cast to boolean
 		return $this->value ? 'true' : 'false';
 	}
 }

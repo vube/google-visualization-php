@@ -15,6 +15,7 @@ class MockResponseWriter extends ResponseWriter {
 	public $headersSent = array();
 	public function sendHeader($name, $value) {
 		$this->headersSent[$name] = $value;
+		parent::sendHeader($name, $value);
 	}
 }
 
@@ -148,6 +149,15 @@ class ResponseWriterTest extends \PHPUnit_Framework_TestCase {
 			"Expect to have sent Content-Type header");
 		$this->assertSame("text/html; charset=UTF-8", $responseWriter->headersSent['Content-Type'],
 			"Expect to have sent HTML Content-Type");
+	}
+
+	public function testTsvExcelResponseWriter()
+	{
+		$response = $this->constructMockResponse(OutputType::TSV_EXCEL);
+		$responseWriter = new MockResponseWriter();
+
+		$this->setExpectedException('\\Vube\\GChart\\DataSource\\Exception\\NotImplementedException');
+		$responseWriter->send($response);
 	}
 
 	public function testUnknownOutputTypeResponseWriter()

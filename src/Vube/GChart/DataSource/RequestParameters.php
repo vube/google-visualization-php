@@ -4,6 +4,7 @@
  */
 
 namespace Vube\GChart\DataSource;
+
 use Vube\GChart\DataSource\Exception\NoSuchParameterException;
 use Vube\GChart\DataSource\Exception\TypeMismatchException;
 

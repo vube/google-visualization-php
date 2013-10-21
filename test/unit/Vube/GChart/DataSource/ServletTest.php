@@ -8,10 +8,12 @@ namespace Vube\GChart\DataSource\test;
 use Vube\GChart\DataSource\Base\ReasonType;
 use Vube\GChart\DataSource\Base\StatusType;
 use Vube\GChart\DataSource\DataTable\DataTable;
+use Vube\GChart\DataSource\Exception;
 use Vube\GChart\DataSource\OutputType;
 use Vube\GChart\DataSource\Request;
 use Vube\GChart\DataSource\RequestParameters;
 use Vube\GChart\DataSource\Response;
+use Vube\GChart\DataSource\ResponseWriter;
 use Vube\GChart\DataSource\Servlet;
 
 
@@ -23,9 +25,9 @@ class MockServlet extends Servlet {
 		$data = new DataTable();
 		return $data;
 	}
-	public function getRequest() {
+	public function constructRequest() {
 		$_GET = $this->serverGetArgs;
-		return parent::getRequest();
+		return parent::constructRequest();
 	}
 	public function setRestrictedAccessMode($enabled) {
 		$this->isRestrictedAccessModeEnabled = $enabled;
@@ -38,6 +40,12 @@ class MockServlet extends Servlet {
 			unset($_SERVER[$header]);
 	}
 };
+
+class MockInternalErrorServlet extends MockServlet {
+	protected function executeTrue(Response &$response) {
+		throw new Exception("Internal error test");
+	}
+}
 
 /**
  * ServletTest class
@@ -65,7 +73,7 @@ class ServletTest extends \PHPUnit_Framework_TestCase {
 		);
 		$servlet->setRestrictedAccessMode(true);
 		$servlet->setSameOriginHeader(false);
-		$response = $servlet->execute();
+		$response = $servlet->generateResponse();
 		$responseStatus = $response->getResponseStatus();
 
 		$this->assertNotNull($responseStatus, "Expect getResponseStatus() did not return null");
@@ -87,7 +95,7 @@ class ServletTest extends \PHPUnit_Framework_TestCase {
 		);
 		$servlet->setRestrictedAccessMode(true);
 		$servlet->setSameOriginHeader(true);
-		$response = $servlet->execute();
+		$response = $servlet->generateResponse();
 		$responseStatus = $response->getResponseStatus();
 
 		$this->assertNull($responseStatus, "Expect getResponseStatus() returned a null status");
@@ -105,11 +113,34 @@ class ServletTest extends \PHPUnit_Framework_TestCase {
 		);
 		$servlet->setRestrictedAccessMode(false);
 		$servlet->setSameOriginHeader(false);
-		$response = $servlet->execute();
+		$response = $servlet->generateResponse();
 		$responseStatus = $response->getResponseStatus();
 
 		$this->assertNull($responseStatus, "Expect getResponseStatus() returned a null status");
 		$this->assertSame(true, $servlet->isDataTablePopulated,
 			"Expect DataTable is populated when access is granted");
+	}
+
+	public function testGetDataTableException()
+	{
+		$servlet = new MockInternalErrorServlet();
+		$response = $servlet->generateResponse();
+		$responseStatus = $response->getResponseStatus();
+
+		$this->assertNotNull($responseStatus, "Expect getResponseStatus() did not return null");
+		$this->assertSame(StatusType::ERROR, $responseStatus->getStatusType()->getCode(),
+			"Expected to receive an ERROR StatusType");
+		$this->assertSame(ReasonType::INTERNAL_ERROR, $responseStatus->getReasonType()->getCode(),
+			"Expected to receive an INTERNAL_ERROR ReasonType");
+	}
+
+	public function testGenerateResponseWriter()
+	{
+		$servlet = new MockInternalErrorServlet();
+		$servlet->setRestrictedAccessMode(false);
+		$writer = $servlet->generateResponseWriter();
+
+		$this->assertTrue($writer instanceof ResponseWriter,
+			"Expect a ResponseWriter object to be returned");
 	}
 }

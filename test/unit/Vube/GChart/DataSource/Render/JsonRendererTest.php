@@ -467,4 +467,22 @@ class JsonRendererTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue($newDateIndex > 0, "Expect JSONP date format to be present");
 		$this->assertFalse($stringDateIndex, "Expect JSON date format to NOT be found");
 	}
+
+	/**
+	 * When sending an ERROR response, DO NOT send a DataTable or the data signature
+	 * to the client, as per Google Visualization wire protocol spec.
+	 */
+	public function testErrorResponseDoesNotContainDataTable()
+	{
+		$responseStatus = new ResponseStatus(new StatusType(StatusType::ERROR),
+			new ReasonType(ReasonType::INTERNAL_ERROR), "internal error test");
+		$renderer = new JsonRenderer();
+		$json = $renderer->render($this->response, $responseStatus);
+		$data = json_decode($json, true);
+
+		$this->assertNotNull($data, "render() result must be valid json");
+		$this->assertTrue(is_array($data), "parsed render() result must be array");
+		$this->assertArrayNotHasKey('table', $data, "render() must NOT return data table");
+		$this->assertArrayNotHasKey('sig', $data, "render() must NOT return data signature");
+	}
 }

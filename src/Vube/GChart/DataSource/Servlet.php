@@ -17,6 +17,16 @@ use Vube\GChart\DataSource\Exception\AccessDeniedException;
  */
 abstract class Servlet {
 
+	/**
+	 * Is Restricted Access Mode enabled?
+	 *
+	 * In restricted access mode, JSON and JSONP requests are
+	 * expressly refused unless the same-origin header is sent
+	 * with the request.
+	 *
+	 * @see https://developers.google.com/chart/interactive/docs/dev/implementing_data_source#security_considerations
+	 * @var bool
+	 */
 	protected $isRestrictedAccessModeEnabled = true;
 
 	/**
@@ -28,7 +38,7 @@ abstract class Servlet {
 	/**
 	 * @return Request
 	 */
-	public function getRequest()
+	public function constructRequest()
 	{
 		// use apache/nginx method for retrieving GET query arguments
 		$request = new Request($_GET);
@@ -40,17 +50,26 @@ abstract class Servlet {
 	 */
 	public function constructResponse()
 	{
-		$request = $this->getRequest();
+		$request = $this->constructRequest();
 		$response = new Response($request);
 		return $response;
 
 	}
 
 	/**
+	 * @return ResponseWriter
+	 */
+	public function constructResponseWriter()
+	{
+		$writer = new ResponseWriter();
+		return $writer;
+	}
+
+	/**
 	 * @return Response
 	 * @throws \Exception if anything goes wrong constructing the Response
 	 */
-	public function execute()
+	public function generateResponse()
 	{
 		// Any exceptions thrown here will propagate up
 		$response = $this->constructResponse();
@@ -73,9 +92,20 @@ abstract class Servlet {
 	}
 
 	/**
+	 * Execute the servlet; generate the response and write it to the client
+	 */
+	public function execute()
+	{
+		$response = $this->generateResponse();
+
+		$writer = $this->constructResponseWriter();
+		$writer->send($response);
+	}
+
+	/**
 	 * @param Response &$response [required] [IN] [OUT]
 	 */
-	private function executeTrue(Response &$response)
+	protected function executeTrue(Response &$response)
 	{
 		$request = $response->getRequest();
 
@@ -91,6 +121,7 @@ abstract class Servlet {
 	}
 
 	/**
+	 * @see https://developers.google.com/chart/interactive/docs/dev/implementing_data_source#security_considerations
 	 * @param OutputType $outputType
 	 * @throws AccessDeniedException
 	 */
@@ -118,6 +149,9 @@ abstract class Servlet {
 		return $isSameOrigin;
 	}
 
+	/**
+	 * @return string Name of the same-origin header in Apache $_SERVER array
+	 */
 	public function getSameOriginHeaderApacheName()
 	{
 		// In apache/nginx "Foo-Bar" header name looks like "FOO_BAR" in $_SERVER

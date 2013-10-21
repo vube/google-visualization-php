@@ -4,6 +4,7 @@
  */
 
 namespace Vube\GChart\DataSource\DataTable;
+
 use Vube\GChart\DataSource\Exception\IndexOutOfBoundsException;
 
 /**

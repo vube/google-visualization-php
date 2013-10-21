@@ -4,7 +4,6 @@
  */
 
 namespace Vube\GChart\DataSource;
-use Vube\GChart\DataSource\Exception\InvalidDateFormatException;
 
 
 /**
