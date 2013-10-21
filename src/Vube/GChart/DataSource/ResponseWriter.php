@@ -66,7 +66,7 @@ class ResponseWriter {
 				break;
 		}
 
-		$this->output = $response->toString();
+		$this->output = $response->__toString();
 	}
 
 	/**

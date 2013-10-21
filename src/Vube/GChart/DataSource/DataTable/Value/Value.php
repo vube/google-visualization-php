@@ -55,7 +55,7 @@ abstract class Value {
 	/**
 	 * @return string
 	 */
-	public function toString()
+	public function __toString()
 	{
 		if($this->value === null)
 			return "null";

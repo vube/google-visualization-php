@@ -20,7 +20,7 @@ class DateValue extends Value {
 		parent::__construct($value, ValueType::DATE);
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$output = $this->value->format("Y-m-d");
 		return $output;

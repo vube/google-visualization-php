@@ -21,7 +21,7 @@ class BooleanValue extends Value {
 	/**
 	 * @return string
 	 */
-	public function toString()
+	public function __toString()
 	{
 		if($this->value === true)
 			return 'true';

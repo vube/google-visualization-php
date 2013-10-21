@@ -20,7 +20,7 @@ class DateTimeValue extends Value {
 		parent::__construct($value, ValueType::DATETIME);
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$output = $this->value->format("Y-m-d H:i:s");
 		$millis = $this->value->getMilliseconds();

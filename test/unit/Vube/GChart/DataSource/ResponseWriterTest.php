@@ -43,9 +43,9 @@ class ResponseWriterTest extends \PHPUnit_Framework_TestCase {
 	public function createMockResponseFromRequest(Request $request)
 	{
 		$response = $this->getMock('\\Vube\\GChart\\DataSource\\Response',
-			array('toString'), array($request));
+			array('__toString'), array($request));
 		$response->expects($this->any())
-			->method('toString')
+			->method('__toString')
 			->will($this->returnValue($this->expectedOutputString));
 		return $response;
 	}

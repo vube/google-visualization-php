@@ -166,7 +166,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
 			->will($this->returnValue($mockRenderer));
 
 		$expected = $mockRenderer->getOutput(1);
-		$output = $response->toString();
-		$this->assertSame($expected, $output, "Response->toString should return rendered output");
+		$output = $response->__toString();
+		$this->assertSame($expected, $output, "Response->__toString should return rendered output");
 	}
 }

@@ -20,7 +20,7 @@ class TimeOfDayValue extends Value {
 		parent::__construct($value, ValueType::TIMEOFDAY);
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$output = $this->value->format("H:i:s");
 		$millis = $this->value->getMilliseconds();

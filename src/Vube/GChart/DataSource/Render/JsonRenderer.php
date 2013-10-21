@@ -289,7 +289,7 @@ class JsonRenderer implements iRenderer {
 			switch($valueTypeCode)
 			{
 				case ValueType::BOOLEAN:
-					$json .= $value->toString();
+					$json .= $value->__toString();
 					break;
 
 				case ValueType::NUMBER:
@@ -297,7 +297,7 @@ class JsonRenderer implements iRenderer {
 					if($value->isNull())
 						$json .= "null";
 					else
-						$json .= json_encode($value->toString());
+						$json .= json_encode($value->__toString());
 					break;
 
 				case ValueType::DATE:

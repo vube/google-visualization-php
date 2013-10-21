@@ -119,7 +119,7 @@ class Response {
 	 * This may result in different output depending on the
 	 * output type in the request.
 	 */
-	public function toString()
+	public function __toString()
 	{
 		try
 		{
