@@ -308,7 +308,18 @@ class JsonRenderer implements iRenderer {
 					}
 					else
 					{
-						$dateValue = $value->toString();
+						$year = $value->getYear();
+						$month = $value->getMonth();
+						$day = $value->getMonthDay();
+						$dateValue = "Date($year,$month,$day";
+						if($valueTypeCode === ValueType::DATETIME)
+						{
+							$hours = $value->getHours();
+							$mins = $value->getMinutes();
+							$secs = $value->getSeconds();
+							$dateValue .= ",$hours,$mins,$secs";
+						}
+						$dateValue .= ")";
 						if($renderDateAsDateConstructor)
 							$json .= "new ".$dateValue;
 						else
@@ -320,7 +331,13 @@ class JsonRenderer implements iRenderer {
 					if($value->isNull())
 						$json .= "null";
 					else
-						$json .= $value->toString();
+					{
+						$hours = $value->getHours();
+						$mins = $value->getMinutes();
+						$secs = $value->getSeconds();
+						$millis = $value->getMilliseconds();
+						$json .= "[$hours,$mins,$secs,$millis]";
+					}
 					break;
 
 				default:

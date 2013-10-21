@@ -20,15 +20,48 @@ class TimeOfDayValue extends Value {
 		parent::__construct($value, ValueType::TIMEOFDAY);
 	}
 
-	public function toString()
+	/**
+	 * @return int
+	 */
+	public function getHours()
 	{
 		$hours = $this->value->format("G"); // 0..23
+		return (int)$hours;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getMinutes()
+	{
 		$mins = 0 + $this->value->format("i"); // remove leading zeros
+		return $mins;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSeconds()
+	{
 		$secs = 0 + $this->value->format("s"); // remove leading zeros
+		return $secs;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getMilliseconds()
+	{
 		$micros = $this->value->format("u"); // microseconds
 		$millis = ((int)($micros/1000)); // convert to milliseconds
+		return $millis;
+	}
 
-		$output = "[$hours,$mins,$secs,$millis]";
+	public function toString()
+	{
+		$output = $this->format("H:i:s");
+		$millis = $this->getMilliseconds();
+		$output .= ".".$millis;
 		return $output;
 	}
 }

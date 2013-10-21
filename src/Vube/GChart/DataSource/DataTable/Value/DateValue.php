@@ -20,13 +20,37 @@ class DateValue extends Value {
 		parent::__construct($value, ValueType::DATE);
 	}
 
-	public function toString()
+	/**
+	 * @return int
+	 */
+	public function getYear()
 	{
 		$year = $this->value->format("Y");
-		$month = -1 + $this->value->format("n"); // 0..11
-		$day = $this->value->format("j"); // 1..31
+		return (int)$year;
+	}
 
-		$output = "Date($year,$month,$day)";
+	/**
+	 * Zero-based Month index
+	 * @return int 0..11
+	 */
+	public function getMonth()
+	{
+		$month = -1 + $this->value->format("n"); // 0..11
+		return $month;
+	}
+
+	/**
+	 * @return int 1..31
+	 */
+	public function getMonthDay()
+	{
+		$day = $this->value->format("j"); // 1..31
+		return (int)$day;
+	}
+
+	public function toString()
+	{
+		$output = $this->format("Y-m-d");
 		return $output;
 	}
 }
