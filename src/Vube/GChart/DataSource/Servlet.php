@@ -5,6 +5,7 @@
 
 namespace Vube\GChart\DataSource;
 
+use Vube\GChart\DataSource\Base\ReasonType;
 use Vube\GChart\DataSource\DataTable\DataTable;
 use Vube\GChart\DataSource\Exception\AccessDeniedException;
 
@@ -15,6 +16,8 @@ use Vube\GChart\DataSource\Exception\AccessDeniedException;
  * @author Ross Perkins <ross@vubeology.com>
  */
 abstract class Servlet {
+
+	protected $isRestrictedAccessModeEnabled = true;
 
 	/**
 	 * @param Request $request
@@ -35,19 +38,56 @@ abstract class Servlet {
 	/**
 	 * @return Response
 	 */
-	public function getResponse()
+	public function constructResponse()
 	{
 		$request = $this->getRequest();
-		$outputType = new OutputType($request->getParameter(RequestParameters::OUTPUT_TYPE_PARAMETER));
+		$response = new Response($request);
+		return $response;
+
+	}
+
+	/**
+	 * @return Response
+	 * @throws \Exception if anything goes wrong constructing the Response
+	 */
+	public function execute()
+	{
+		// Any exceptions thrown here will propagate up
+		$response = $this->constructResponse();
+
+		// Now we have a response, any exceptions thrown
+		// while executing will set an error status in response
+		try
+		{
+			$this->executeTrue($response);
+		}
+		catch(AccessDeniedException $e)
+		{
+			$response->setErrorResponse(ReasonType::ACCESS_DENIED);
+		}
+		catch(\Exception $e)
+		{
+			$response->setErrorResponse(ReasonType::INTERNAL_ERROR);
+		}
+		return $response;
+	}
+
+	/**
+	 * @param Response &$response [required] [IN] [OUT]
+	 */
+	private function executeTrue(Response &$response)
+	{
+		$request = $response->getRequest();
+
+		// Verify that the user is granted access to the data
 
 		if($this->isRestrictedAccessMode())
-			$this->verifyAccessAllowed($outputType);
+			$this->verifyAccessAllowed($request->getOutputType());
+
+		// Populate the data
 
 		$data = $this->getDataTable($request);
-
-		$response = new Response($request);
 		$response->setDataTable($data);
-		return $response;
 	}
 
 	/**
@@ -73,11 +113,17 @@ abstract class Servlet {
 	 */
 	public function isSameOrigin()
 	{
+		$header = $this->getSameOriginHeaderApacheName();
+		$isSameOrigin = isset($_SERVER[$header]);
+		return $isSameOrigin;
+	}
+
+	public function getSameOriginHeaderApacheName()
+	{
 		// In apache/nginx "Foo-Bar" header name looks like "FOO_BAR" in $_SERVER
 		$header = strtoupper(Request::SAME_ORIGIN_HEADER);
 		$header = str_replace('-', '_', $header);
-
-		return isset($_SERVER[$header]);
+		return $header;
 	}
 
 	/**
@@ -85,7 +131,7 @@ abstract class Servlet {
 	 */
 	public function isRestrictedAccessMode()
 	{
-		return true;
+		return $this->isRestrictedAccessModeEnabled;
 	}
 
 }

@@ -5,10 +5,12 @@
 
 namespace Vube\GChart\DataSource;
 
+use Vube\GChart\DataSource\Base\ReasonType;
 use Vube\GChart\DataSource\Base\ResponseStatus;
 use Vube\GChart\DataSource\Base\StatusType;
 use Vube\GChart\DataSource\DataTable\DataTable;
 use Vube\GChart\DataSource\Exception\NotImplementedException;
+use Vube\GChart\DataSource\Exception\RenderFailureException;
 use Vube\GChart\DataSource\Render\iRenderer;
 use Vube\GChart\DataSource\Render\JsonRenderer;
 
@@ -28,11 +30,16 @@ class Response {
 	 * @var DataTable
 	 */
 	private $data;
+	/**
+	 * @var ResponseStatus
+	 */
+	private $responseStatus;
 
 	public function __construct(Request $request)
 	{
 		$this->request = $request;
 		$this->data = new DataTable();
+		$this->responseStatus = null;
 	}
 
 	/**
@@ -57,6 +64,21 @@ class Response {
 	public function setDataTable(DataTable $data)
 	{
 		$this->data = $data;
+	}
+
+	public function setErrorResponse($reasonTypeCode = ReasonType::INTERNAL_ERROR, $description = '')
+	{
+		$statusType = new StatusType(StatusType::ERROR);
+		$reasonType = new ReasonType($reasonTypeCode);
+		$this->responseStatus = new ResponseStatus($statusType, $reasonType, $description);
+	}
+
+	/**
+	 * @return null|ResponseStatus
+	 */
+	public function getResponseStatus()
+	{
+		return $this->responseStatus;
 	}
 
 	/**
@@ -99,15 +121,25 @@ class Response {
 	 */
 	public function toString()
 	{
-		$renderer = $this->getRenderer();
+		try
+		{
+			$renderer = $this->getRenderer();
 
-		// If there were any warnings generating this DataTable, we must send them
-		// in the response and set the response status to WARNING
-		$responseStatus = null;
-		if($this->data->getNumberOfWarnings() > 0)
-			$responseStatus = new ResponseStatus(new StatusType(StatusType::WARNING));
+			// If there were any warnings generating this DataTable, we must send them
+			// in the response and set the response status to WARNING
+			$responseStatus = $this->responseStatus;
+			if($responseStatus === null)
+			{
+				if($this->data->getNumberOfWarnings() > 0)
+					$responseStatus = new ResponseStatus(new StatusType(StatusType::WARNING));
+			}
 
-		$output = $renderer->render($this, $responseStatus);
-		return $output;
+			$output = $renderer->render($this, $responseStatus);
+			return $output;
+		}
+		catch(\Exception $e)
+		{
+			throw new RenderFailureException($e);
+		}
 	}
 }

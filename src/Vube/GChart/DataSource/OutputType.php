@@ -21,7 +21,7 @@ class OutputType {
 	const CSV = 'csv';
 	const TSV_EXCEL = 'tsv-excel';
 
-	private static $validCodes = array(
+	protected static $validCodes = array(
 		self::JSON,
 		self::JSONP,
 		self::HTML,

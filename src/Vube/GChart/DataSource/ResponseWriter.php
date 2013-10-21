@@ -5,6 +5,8 @@
 
 namespace Vube\GChart\DataSource;
 
+use Vube\GChart\DataSource\Exception\NotImplementedException;
+
 
 /**
  * ResponseWriter class
@@ -16,21 +18,27 @@ class ResponseWriter {
 	private $headers = array();
 	private $output = '';
 
-	public function prepare(Response $response)
+	/**
+	 * @param Response $response
+	 * @throws Exception\NotImplementedException
+	 * @throws Exception
+	 */
+	protected function prepare(Response $response)
 	{
 		$request = $response->getRequest();
-		$outputTypeCode = $request->getParameter(RequestParameters::OUTPUT_TYPE_PARAMETER);
+		$requestParams = $request->getParameters();
+		$outputTypeCode = $requestParams->getParameter(RequestParameters::OUTPUT_TYPE_PARAMETER);
 
 		switch($outputTypeCode)
 		{
 			case OutputType::TSV_EXCEL:
-				throw new Exception($outputTypeCode." output is not implemented");
+				throw new NotImplementedException($outputTypeCode." output is not implemented");
 				break;
 
 			case OutputType::CSV:
 				$this->headers['Content-Type'] = 'text/csv; charset=UTF-8';
 
-				$outFilename = $request->getParameter(RequestParameters::OUTPUT_FILE_NAME_PARAMETER);
+				$outFilename = $requestParams->getParameter(RequestParameters::OUTPUT_FILE_NAME_PARAMETER);
 				if($outFilename === false)
 					$outFilename = 'results.csv';
 
@@ -61,13 +69,22 @@ class ResponseWriter {
 		$this->output = $response->toString();
 	}
 
-	public function sendHeader($name, $value)
+	/**
+	 * @param string $name
+	 * @param string $value
+	 */
+	protected function sendHeader($name, $value)
 	{
 		header($name.": ".$value);
 	}
 
-	public function send()
+	/**
+	 * @param Response $response
+	 */
+	public function send(Response $response)
 	{
+		$this->prepare($response);
+
 		foreach($this->headers as $name => $value)
 			$this->sendHeader($name, $value);
 
