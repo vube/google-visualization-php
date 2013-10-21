@@ -1,8 +1,8 @@
 {
 	"name": "vube/google-visualization-php",
 	"type": "library",
-	"description": "Google Charts data source implementation in PHP",
-	"keywords": ["vube", "Google Charts", "data source", "php library"],
+	"description": "Google Visualization DataSource in PHP",
+	"keywords": ["vube", "Google Visualization", "DataSource", "Google Charts", "php"],
 	"license": "MIT",
 	"authors": [
 		{
