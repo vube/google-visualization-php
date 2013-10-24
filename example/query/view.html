@@ -1,0 +1,57 @@
+<html>
+<head>
+	<title>Query Example View</title>
+	<!--Load the AJAX API-->
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+
+		// Load the Visualization API and the piechart package.
+		google.load('visualization', '1', {'packages':['corechart','table']});
+
+		// Set a callback to run when the Google Visualization API is loaded.
+		google.setOnLoadCallback(drawVisualization);
+
+		function drawVisualization() {
+
+			var url = location.href.replace(/\/[^\/]*$/, "/apache-endpoint.php");
+			document.getElementById('query_url').innerText = url;
+
+			var query = new google.visualization.Query(url);
+			query.setQuery('select date, sum(income), sum(expense) pivot country');
+
+			// Send the query with a callback function.
+			query.send(handleQueryResponse);
+		}
+
+		function handleQueryResponse(response) {
+			if (response.isError()) {
+				alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+				return;
+			}
+
+			var data = response.getDataTable();
+
+			chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+			chart.draw(data, { width: 600, height: 300,
+				title: "Query Example Chart"
+			});
+
+			table = new google.visualization.Table(document.getElementById('table_div'));
+			table.draw(data, { width: 600 });
+		}
+	</script>
+	<style type="text/css">
+		#query_url {background-color: #f0f000;}
+	</style>
+</head>
+
+<body>
+<div>
+	DataSource Query URL: <span id="query_url">Loading...</span><br/>
+</div>
+<!--Div that will hold the chart-->
+<div id="chart_div">Loading...</div>
+<!--Div that will hold the table-->
+<div id="table_div">Loading...</div>
+</body>
+</html>

@@ -8,6 +8,8 @@ namespace Vube\GoogleVisualization\DataSource;
 use Vube\GoogleVisualization\DataSource\Base\ReasonType;
 use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
 use Vube\GoogleVisualization\DataSource\Exception\AccessDeniedException;
+use Vube\GoogleVisualization\DataSource\Query\Engine\QueryEngine;
+use Vube\GoogleVisualization\DataSource\Query\Query;
 
 
 /**
@@ -120,6 +122,11 @@ abstract class Servlet {
 
 		// Populate the data
 		$data =& $this->getDataTable($request);
+
+		// Apply query, if any
+		$query = Query::constructFromString($request->getQuery());
+		if(! $query->isEmpty())
+			$data =& QueryEngine::execute($query, $data);
 
 		$response->setDataTable($data);
 	}
