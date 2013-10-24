@@ -10,21 +10,18 @@
 
 use Vube\GoogleVisualization\DataSource\DataTable\ColumnDescription;
 use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
-use Vube\GoogleVisualization\DataSource\DataTable\TableCell;
 use Vube\GoogleVisualization\DataSource\DataTable\TableRow;
-use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
-use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
 use Vube\GoogleVisualization\DataSource\Date;
 use Vube\GoogleVisualization\DataSource\Request;
 use Vube\GoogleVisualization\DataSource\Servlet;
 
 /**
- * MyServlet class
+ * MySimpleServlet class
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class MyServlet extends Servlet {
+class MySimpleServlet extends Servlet {
 
 	/**
 	 * Constructor
@@ -56,18 +53,11 @@ class MyServlet extends Servlet {
 
 		for($i=0; $i<10; $i++)
 		{
-			$row = new TableRow();
-
 			$date = "2013-01-".sprintf("%02d",1+$i);
 			$income = 1000+rand(0,(1+$i)*10);
 			$expense = -800-rand(0,(1+$i)*10);
 
-			$row->addCell(new TableCell(new DateValue(new Date($date))));
-			$row->addCell(new TableCell(new NumberValue($income)));
-			$row->addCell(new TableCell(new NumberValue($expense)));
-			$row->addCell(new TableCell(new NumberValue($income+$expense)));
-
-			$data->addRow($row);
+			$data->addRow(new TableRow(array(new Date($date), $income, $expense, $income+$expense)));
 		}
 
 		return $data;

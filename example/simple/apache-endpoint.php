@@ -18,10 +18,10 @@ try
 	require_once '../../src/Vube/GoogleVisualization/DataSource/autoload.php';
 
 	// Enable autoloader of your own source, or include it directly
-	require_once './MyServlet.php';
+	require_once './MySimpleServlet.php';
 
 	// Execute the servlet to generate the data table and send the output
-	$servlet = new MyServlet();
+	$servlet = new MySimpleServlet();
 	$servlet->execute();
 }
 catch(\Exception $e)
