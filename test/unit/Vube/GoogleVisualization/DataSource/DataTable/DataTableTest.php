@@ -322,6 +322,23 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($value instanceof TimeOfDayValue, "expect a TimeOfDayValue in the table");
 	}
 
+	public function testNullCellTypeCast()
+	{
+		$data = new DataTable();
+		// a number column
+		$data->addColumn(new ColumnDescription('val', ValueType::NUMBER));
+		// add a NULL string value to the number column
+		$row = new TableRow();
+		$row->addCell(new TextValue(null));
+		$data->addRow($row);
+		// It should have been casted to a NULL number value
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof NumberValue, "expect a TimeOfDayValue in the table");
+		$this->assertTrue($value->isNull(), "expect value->isNull == true");
+	}
+
 	public function testDataTableCustomProperties()
 	{
 		$data = new DataTable('first', ValueType::STRING);
