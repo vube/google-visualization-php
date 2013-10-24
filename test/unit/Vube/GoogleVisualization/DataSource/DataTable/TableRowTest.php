@@ -57,8 +57,8 @@ class TableRowTest extends \PHPUnit_Framework_TestCase
 		$cell0 = $row->getCell(0);
 		$cell1 = $row->getCell(1);
 
-		$this->assertSame('a', $cell0->getValue()->getValue(), "first cell value must match");
-		$this->assertSame('b', $cell1->getValue()->getValue(), "second cell value must match");
+		$this->assertSame('a', $cell0->getValue()->getRawValue(), "first cell value must match");
+		$this->assertSame('b', $cell1->getValue()->getRawValue(), "second cell value must match");
 	}
 
 	public function testAddCellWithRawValue()
@@ -70,7 +70,7 @@ class TableRowTest extends \PHPUnit_Framework_TestCase
 
 		$cell0 = $row->getCell(0);
 
-		$this->assertSame('value', $cell0->getValue()->getValue(), "cell value must match");
+		$this->assertSame('value', $cell0->getValue()->getRawValue(), "cell value must match");
 	}
 
 	public function testSetCell()
@@ -83,7 +83,7 @@ class TableRowTest extends \PHPUnit_Framework_TestCase
 
 		$cell0 = $row->getCell(0);
 
-		$this->assertSame('set value', $cell0->getValue()->getValue(), "cell value must match");
+		$this->assertSame('set value', $cell0->getValue()->getRawValue(), "cell value must match");
 	}
 
 	public function testSetCellWithRawValue()
@@ -96,7 +96,7 @@ class TableRowTest extends \PHPUnit_Framework_TestCase
 
 		$cell0 = $row->getCell(0);
 
-		$this->assertSame('set value', $cell0->getValue()->getValue(), "cell value must match");
+		$this->assertSame('set value', $cell0->getValue()->getRawValue(), "cell value must match");
 	}
 
 	public function testGetCellInvalidIndex()

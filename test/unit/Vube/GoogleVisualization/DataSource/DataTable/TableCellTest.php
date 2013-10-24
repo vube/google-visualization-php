@@ -39,7 +39,7 @@ class TableCellTest extends \PHPUnit_Framework_TestCase
 	public function testTableCellValueWithFormat()
 	{
 		$value = new NumberValue(1.29159386);
-		$formattedValue = sprintf("%0.2f", $value->getValue());
+		$formattedValue = sprintf("%0.2f", $value->getRawValue());
 		$cell = new TableCell($value, $formattedValue);
 		$properties = $cell->getCustomProperties();
 
@@ -100,11 +100,11 @@ class TableCellTest extends \PHPUnit_Framework_TestCase
 	{
 		$value = new TextValue('foo');
 		$properties = array('a' => 'enabled');
-		$cell = new TableCell($value, $value->getValue(), $properties);
+		$cell = new TableCell($value, $value->getRawValue(), $properties);
 		$properties = $cell->getCustomProperties();
 
 		$this->assertEquals($value, $cell->getValue(), "Table cell value must match input");
-		$this->assertSame($value->getValue(), $cell->getFormattedValue(), "Table cell formatted value must match input");
+		$this->assertSame($value->getRawValue(), $cell->getFormattedValue(), "Table cell formatted value must match input");
 		$this->assertTrue(is_array($properties), "properties must be an array");
 		$this->assertArrayHasKey('a', $properties, "properties[a] must exist");
 		$this->assertSame($properties['a'], $cell->getCustomProperty('a'), "getCustomProperty must return expected value");

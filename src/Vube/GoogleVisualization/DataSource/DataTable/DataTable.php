@@ -114,7 +114,7 @@ class DataTable
 				if($cellIsDatelike)
 				{
 					$castedCell = $cells[$i];
-					$rawValue = $castedCell->getValue()->getValue();
+					$rawValue = $castedCell->getValue()->getRawValue();
 
 					switch($columnDataType->getCode())
 					{

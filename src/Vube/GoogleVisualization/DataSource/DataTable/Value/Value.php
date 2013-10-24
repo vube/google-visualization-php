@@ -47,7 +47,7 @@ abstract class Value {
 	/**
 	 * @return mixed
 	 */
-	public function getValue()
+	public function getRawValue()
 	{
 		return $this->value;
 	}

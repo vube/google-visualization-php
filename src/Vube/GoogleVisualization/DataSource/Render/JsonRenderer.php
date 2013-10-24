@@ -306,7 +306,7 @@ class JsonRenderer implements iRenderer {
 					}
 					else
 					{
-						$date = $value->getValue();
+						$date = $value->getRawValue();
 						$year = $date->getYear();
 						$month = $date->getMonth();
 						$day = $date->getMonthDay();
@@ -331,7 +331,7 @@ class JsonRenderer implements iRenderer {
 						$json .= "null";
 					else
 					{
-						$date = $value->getValue();
+						$date = $value->getRawValue();
 						$hours = $date->getHours();
 						$mins = $date->getMinutes();
 						$secs = $date->getSeconds();
