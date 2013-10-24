@@ -33,7 +33,7 @@ abstract class Servlet {
 	 * @param Request $request
 	 * @return DataTable
 	 */
-	abstract public function getDataTable(Request $request);
+	abstract public function & getDataTable(Request $request);
 
 	/**
 	 * Constructor
@@ -115,13 +115,12 @@ abstract class Servlet {
 		$request = $response->getRequest();
 
 		// Verify that the user is granted access to the data
-
 		if($this->isRestrictedAccessMode())
 			$this->verifyAccessAllowed($request->getOutputType());
 
 		// Populate the data
+		$data =& $this->getDataTable($request);
 
-		$data = $this->getDataTable($request);
 		$response->setDataTable($data);
 	}
 

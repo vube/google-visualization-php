@@ -20,7 +20,7 @@ use Vube\GoogleVisualization\DataSource\Servlet;
 class MockServlet extends Servlet {
 	public $isDataTablePopulated = false;
 	public $serverGetArgs = array();
-	public function getDataTable(Request $request) {
+	public function & getDataTable(Request $request) {
 		$this->isDataTablePopulated = true;
 		$data = new DataTable();
 		return $data;
@@ -53,6 +53,11 @@ class MockInternalErrorServlet extends MockServlet {
  * @author Ross Perkins <ross@vubeology.com>
  */
 class ServletTest extends \PHPUnit_Framework_TestCase {
+
+	public function setUp()
+	{
+		$_GET = array();
+	}
 
 	public function testConstructResponse()
 	{

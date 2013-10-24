@@ -42,7 +42,7 @@ class MySimpleServlet extends Servlet {
 	 * @param Request $request
 	 * @return DataTable
 	 */
-	public function getDataTable(Request $request)
+	public function & getDataTable(Request $request)
 	{
 		$data = new DataTable();
 
