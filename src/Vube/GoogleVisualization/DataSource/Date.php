@@ -86,10 +86,35 @@ class Date extends \DateTime
 	/**
 	 * @return int
 	 */
+	public function getMicroseconds()
+	{
+		$micros = 0 + $this->format("u"); // remove leading zeros
+		return $micros;
+	}
+
+	/**
+	 * @return int
+	 */
 	public function getMilliseconds()
 	{
-		$micros = $this->format("u"); // microseconds
-		$millis = ((int)($micros/1000)); // convert to milliseconds
+		// Round to the nearest millisecond
+		$millis = ((int)($this->getMicroseconds()/1000));
 		return $millis;
+	}
+
+	public function getTimezoneOffsetString()
+	{
+		$tzo = $this->format("O");
+		return $tzo;
+	}
+
+	/**
+	 * Return a predictable string representation
+	 * @return string
+	 */
+	public function __toString()
+	{
+		$string = $this->format('Y-m-d\TH:i:s.uO');
+		return $string;
 	}
 }
