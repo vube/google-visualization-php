@@ -6,6 +6,10 @@
 namespace Vube\GoogleVisualization\DataSource\DataTable;
 
 use Vube\GoogleVisualization\DataSource\Base\Warning;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateTimeValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\TimeOfDayValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
 use Vube\GoogleVisualization\DataSource\Exception;
 use Vube\GoogleVisualization\DataSource\Exception\ColumnCountMismatchException;
 use Vube\GoogleVisualization\DataSource\Exception\IndexOutOfBoundsException;
@@ -100,7 +104,37 @@ class DataTable
 			$cellValueType = $cells[$i]->getValue()->getType();
 
 			if($columnDataType->getCode() != $cellValueType->getCode())
-				throw new ValueTypeMismatchException($columnDataType, $i);
+			{
+				// If this is a DateValue, DateTimeValue or TimeOfDayValue,
+				// we can just cast it, the underlying data is the same
+
+				$castedCell = false;
+
+				$cellIsDatelike = in_array($cellValueType->getCode(), array(ValueType::DATE, ValueType::DATETIME, ValueType::TIMEOFDAY));
+				if($cellIsDatelike)
+				{
+					$castedCell = $cells[$i];
+					$rawValue = $castedCell->getValue()->getValue();
+
+					switch($columnDataType->getCode())
+					{
+						case ValueType::DATE:
+							$castedCell->setValue(new DateValue($rawValue));
+							break;
+						case ValueType::DATETIME:
+							$castedCell->setValue(new DateTimeValue($rawValue));
+							break;
+						case ValueType::TIMEOFDAY:
+							$castedCell->setValue(new TimeOfDayValue($rawValue));
+							break;
+						default:
+							break;
+					}
+				}
+				if(! $castedCell)
+					throw new ValueTypeMismatchException($columnDataType, $i);
+				$row->setCell($i, $castedCell);
+			}
 		}
 
 		// Add the row to the table

@@ -6,8 +6,15 @@
 namespace Vube\GoogleVisualization\DataSource\DataTable\test;
 
 use Vube\GoogleVisualization\DataSource\DataTable\TableCell;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\BooleanValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\TextValue;
+use Vube\GoogleVisualization\DataSource\Date;
+use Vube\GoogleVisualization\DataSource\Exception;
+
+
+class SomeUnknownClass {};
 
 
 /**
@@ -40,6 +47,53 @@ class TableCellTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame($formattedValue, $cell->getFormattedValue(), "Table cell formatted value must match input");
 		$this->assertTrue(is_array($properties), "properties must be an array");
 		$this->assertEquals(0, count($properties), "properties must be an empty array");
+	}
+
+	public function testImplicitValueTypeInt()
+	{
+		$cell = new TableCell(123);
+		$value = $cell->getValue();
+		$this->assertTrue($value instanceof NumberValue, "Expected 123 to cast to a NumberValue");
+	}
+
+	public function testImplicitValueTypeFloat()
+	{
+		$cell = new TableCell(1.2);
+		$value = $cell->getValue();
+		$this->assertTrue($value instanceof NumberValue, "Expected 1.2 to cast to a NumberValue");
+	}
+
+	public function testImplicitValueTypeBool()
+	{
+		$cell = new TableCell(true);
+		$value = $cell->getValue();
+		$this->assertTrue($value instanceof BooleanValue, "Expected true to cast to a BooleanValue");
+	}
+
+	public function testImplicitValueTypeDate()
+	{
+		$cell = new TableCell(new Date());
+		$value = $cell->getValue();
+		$this->assertTrue($value instanceof DateValue, "Expected Date() to cast to a DateValue");
+	}
+
+	public function testImplicitValueTypeString()
+	{
+		$cell = new TableCell("string");
+		$value = $cell->getValue();
+		$this->assertTrue($value instanceof TextValue, "Expected 'string' to cast to a TextValue");
+	}
+
+	public function testImplicitValueTypeNull()
+	{
+		$this->setExpectedException('\\Vube\\GoogleVisualization\\DataSource\\Exception\\TypeMismatchException');
+		$cell = new TableCell(null);
+	}
+
+	public function testImplicitValueTypeUnknownClass()
+	{
+		$this->setExpectedException('\\Vube\\GoogleVisualization\\DataSource\\Exception\\TypeMismatchException');
+		$cell = new TableCell(new SomeUnknownClass());
 	}
 
 	public function testTableCellValueWithProperties()

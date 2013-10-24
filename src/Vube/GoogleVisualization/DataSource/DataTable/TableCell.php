@@ -5,8 +5,15 @@
 
 namespace Vube\GoogleVisualization\DataSource\DataTable;
 
+use Vube\GoogleVisualization\DataSource\DataTable\Value\BooleanValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\TextValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\Value;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
+use Vube\GoogleVisualization\DataSource\Date;
+use Vube\GoogleVisualization\DataSource\Exception\NoSuchValueTypeException;
+use Vube\GoogleVisualization\DataSource\Exception\TypeMismatchException;
 
 
 /**
@@ -30,13 +37,13 @@ class TableCell
 	private $customProperties;
 
 	/**
-	 * @param mixed $value Raw value
+	 * @param Value|mixed $value Raw value of the cell
 	 * @param null|string $formattedValue
 	 * @param array $customProperties
 	 */
-	public function __construct(Value $value, $formattedValue=null, array $customProperties=array())
+	public function __construct($value, $formattedValue=null, array $customProperties=array())
 	{
-		$this->value = $value;
+		$this->setValue($value);
 		$this->formattedValue = $formattedValue;
 		$this->customProperties = $customProperties;
 	}
@@ -63,6 +70,41 @@ class TableCell
 	public function getFormattedValue()
 	{
 		return $this->formattedValue;
+	}
+
+	/**
+	 * @param mixed $value
+	 */
+	public function setValue($value)
+	{
+		if(! $value instanceof Value)
+			$value = $this->constructDefaultValueType($value);
+
+		$this->value = $value;
+	}
+
+	/**
+	 * Given a raw value, construct the default Value object for it
+	 *
+	 * @param mixed $value
+	 * @return Value
+	 * @throws TypeMismatchException
+	 */
+	public function constructDefaultValueType($value)
+	{
+		if(is_int($value) || is_float($value))
+			return new NumberValue($value);
+
+		if(is_bool($value))
+			return new BooleanValue($value);
+
+		if($value instanceof Date)
+			return new DateValue($value);
+
+		if(is_string($value))
+			return new TextValue($value);
+
+		throw new TypeMismatchException(array('int','float','bool','Date','string'), $value);
 	}
 
 	/**
