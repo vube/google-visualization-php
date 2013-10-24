@@ -4,6 +4,7 @@
  */
 
 namespace Vube\GoogleVisualization\DataSource\DataTable\Value\test;
+
 use Vube\GoogleVisualization\DataSource\DataTable\Value\DateTimeValue;
 use Vube\GoogleVisualization\DataSource\Date;
 
@@ -15,19 +16,27 @@ use Vube\GoogleVisualization\DataSource\Date;
  */
 class DateTimeValueTest extends \PHPUnit_Framework_TestCase {
 
-	public function testToStringWithoutMilliseconds()
+	public function testStringConstructorToString()
 	{
-		$expected = "2013-01-01 00:01:02";
-		$datetime = new DateTimeValue(new Date($expected));
+		$expected = "2013-01-01T00:01:02+0000";
+		$datetime = new DateTimeValue($expected);
 		$actual = $datetime->__toString();
-		$this->assertSame($expected, $actual, "Expect YYYY-MM-DD HH:mm:ss format");
+		$this->assertSame($expected, $actual);
 	}
 
-	public function testToStringWithMilliseconds()
+	public function testDateConstructorToString()
 	{
-		$expected = "2013-01-01 00:01:02.001";
+		$expected = "2013-01-01T00:01:02.123456+0130";
 		$datetime = new DateTimeValue(new Date($expected));
 		$actual = $datetime->__toString();
-		$this->assertSame($expected, $actual, "Expect YYYY-MM-DD HH:mm:ss.mmm format");
+		$this->assertSame($expected, $actual);
+	}
+
+	public function testNullConstructorToString()
+	{
+		$expected = "null";
+		$datetime = new DateTimeValue(null);
+		$actual = $datetime->__toString();
+		$this->assertSame($expected, $actual, "toString should return null");
 	}
 }

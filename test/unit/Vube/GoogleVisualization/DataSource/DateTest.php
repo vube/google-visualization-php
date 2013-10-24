@@ -50,7 +50,7 @@ class DateTest extends \PHPUnit_Framework_TestCase {
 		$mysqlDateTimeLocal = '2013-10-18 15:14:43';
 		$date = new Date($mysqlDateTimeLocal, new \DateTimeZone('CDT'));
 
-		$expected = '2013-10-18T15:14:43.000000-0500';
+		$expected = '2013-10-18T15:14:43-0500';
 		$actual = $date->__toString();
 
 		$this->assertSame($expected, $actual, "__toString must return this format");

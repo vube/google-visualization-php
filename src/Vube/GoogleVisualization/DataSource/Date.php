@@ -114,7 +114,11 @@ class Date extends \DateTime
 	 */
 	public function __toString()
 	{
-		$string = $this->format('Y-m-d\TH:i:s.uO');
+		$micros = $this->getMicroseconds();
+		$string = $this->format('Y-m-d\TH:i:s');
+		if($micros > 0)
+			$string .= "." . $micros;
+		$string .= $this->getTimezoneOffsetString();
 		return $string;
 	}
 }
