@@ -91,7 +91,7 @@ abstract class Servlet {
 		}
 		catch(\Exception $e)
 		{
-			$response->setErrorResponse(ReasonType::INTERNAL_ERROR);
+			$response->setErrorResponse(ReasonType::INTERNAL_ERROR, $e->getMessage());
 		}
 		return $response;
 	}
