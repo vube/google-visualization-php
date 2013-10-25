@@ -116,9 +116,6 @@ class DataTable
 
 			if($columnDataType->getCode() != $cellValueType->getCode())
 			{
-				// If this is a DateValue, DateTimeValue or TimeOfDayValue,
-				// we can just cast it, the underlying data is the same
-
 				$castedCell = false;
 
 				if($cellValue->isNull())
@@ -128,7 +125,14 @@ class DataTable
 				}
 				else
 				{
-					$cellIsDatelike = in_array($cellValueType->getCode(), array(ValueType::DATE, ValueType::DATETIME, ValueType::TIMEOFDAY));
+					// If this column is supposed to have a date, be pretty flexible
+					// what kind of input data we have.
+					//
+					// Cast from whatever types we can to the date type.  This may be
+					// casting from a string to a date, or casting from one type of
+					// date value to another.
+
+					$cellIsDatelike = $cellValueType->isDateValue() || $columnDataType->isDateValue();
 					if($cellIsDatelike)
 					{
 						$castedCell = clone $cells[$i];

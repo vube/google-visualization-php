@@ -322,6 +322,20 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($value instanceof TimeOfDayValue, "expect a TimeOfDayValue in the table");
 	}
 
+	public function testAutoStringToDateCast()
+	{
+		$dateText = '2013-01-01'; // a string representation of date, NOT a Date() object
+		$data = new DataTable();
+		$data->addColumn(new ColumnDescription('day', ValueType::DATE));
+		$data->addRow(new TableRow(array($dateText)));
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof DateValue, "expect a DateValue in the table");
+		$this->assertSame($dateText, $value->getRawValue()->format('Y-m-d'),
+			"Expect the casted date to be the same as the input value");
+	}
+
 	public function testNullCellTypeCast()
 	{
 		$data = new DataTable();
