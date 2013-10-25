@@ -25,7 +25,7 @@ class ValueTypeMismatchException extends Exception
 	 */
 	public function __construct(ValueType $expectedType, $columnIndex = 0, \Exception $previous = null)
 	{
-		$message = "Value type mismatch, expected ".$expectedType->getCode();
+		$message = "Value type mismatch, expected ".$expectedType->getTypeName();
 
 		parent::__construct($message, $columnIndex, $previous);
 	}
