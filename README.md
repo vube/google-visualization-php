@@ -15,7 +15,16 @@ Features
 --------
 
 - Use PHP endpoints in Apache or Nginx as a DataSource for Google Charts
-- `Note: JQL queries are not yet implemented.`
+- Limited query language support
+    - select columns
+    - pivot
+
+
+Limitations
+-----------
+
+- The full query language is not yet supported.
+
 
 
 Installation
@@ -26,7 +35,7 @@ Load google-visualization-php into your project by adding the following lines to
 ``` json
 {
     "require": {
-        "vube/google-visualization-php": ">=0.1"
+        "vube/google-visualization-php": ">=0.2"
     }
 }
 ```
