@@ -11,6 +11,7 @@ use Vube\GoogleVisualization\DataSource\DataTable\ColumnDescription;
 use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
 use Vube\GoogleVisualization\DataSource\DataTable\TableCell;
 use Vube\GoogleVisualization\DataSource\DataTable\TableRow;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\BooleanValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\DateTimeValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
@@ -361,6 +362,34 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
 		$this->assertTrue($value instanceof NumberValue, "expect a NumberValue in the table");
 		$this->assertEquals(floatval($text), $value->getRawValue(),
+			"Expect the casted value to be the same as the input value");
+	}
+
+	public function testAutoTrueStringToBooleanCast()
+	{
+		$text = 'true'; // a string representation of true
+		$data = new DataTable();
+		$data->addColumn(new ColumnDescription('value', ValueType::BOOLEAN));
+		$data->addRow(new TableRow(array($text)));
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof BooleanValue, "expect a BooleanValue in the table");
+		$this->assertSame(true, $value->getRawValue(),
+			"Expect the casted value to be the same as the input value");
+	}
+
+	public function testAutoFalseStringToBooleanCast()
+	{
+		$text = 'false'; // a string representation of false
+		$data = new DataTable();
+		$data->addColumn(new ColumnDescription('value', ValueType::BOOLEAN));
+		$data->addRow(new TableRow(array($text)));
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof BooleanValue, "expect a BooleanValue in the table");
+		$this->assertSame(false, $value->getRawValue(),
 			"Expect the casted value to be the same as the input value");
 	}
 
