@@ -15,8 +15,14 @@ use Vube\GoogleVisualization\DataSource\Date;
  */
 class DateValue extends Value {
 
-	public function __construct(Date $value)
+	/**
+	 * @param Date|string|int $value
+	 */
+	public function __construct($value)
 	{
+		if($value !== null && ! $value instanceof Date)
+			$value = new Date($value);
+
 		parent::__construct($value, ValueType::DATE);
 	}
 
@@ -25,7 +31,10 @@ class DateValue extends Value {
 	 */
 	public function __toString()
 	{
-		$output = $this->value->format("Y-m-d");
+		if($this->value === null)
+			$output = "null";
+		else
+			$output = $this->value->format("Y-m-d");
 		return $output;
 	}
 }

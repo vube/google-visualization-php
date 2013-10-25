@@ -6,6 +6,11 @@
 namespace Vube\GoogleVisualization\DataSource\DataTable;
 
 use Vube\GoogleVisualization\DataSource\Base\Warning;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateTimeValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\TimeOfDayValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueFactory;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
 use Vube\GoogleVisualization\DataSource\Exception;
 use Vube\GoogleVisualization\DataSource\Exception\ColumnCountMismatchException;
 use Vube\GoogleVisualization\DataSource\Exception\IndexOutOfBoundsException;
@@ -20,8 +25,17 @@ use Vube\GoogleVisualization\DataSource\Exception\ValueTypeMismatchException;
  */
 class DataTable
 {
+	/**
+	 * @var array
+	 */
 	private $columns = array();
+	/**
+	 * @var array
+	 */
 	private $rows = array();
+	/**
+	 * @var array
+	 */
 	private $warnings = array();
 	/**
 	 * @var array
@@ -97,10 +111,54 @@ class DataTable
 		for($i=0; $i<$this->columnCount; $i++)
 		{
 			$columnDataType = $this->columns[$i]->getType();
-			$cellValueType = $cells[$i]->getValue()->getType();
+			$cellValue = $cells[$i]->getValue();
+			$cellValueType = $cellValue->getType();
 
 			if($columnDataType->getCode() != $cellValueType->getCode())
-				throw new ValueTypeMismatchException($columnDataType, $i);
+			{
+				// If this is a DateValue, DateTimeValue or TimeOfDayValue,
+				// we can just cast it, the underlying data is the same
+
+				$castedCell = false;
+
+				if($cellValue->isNull())
+				{
+					// Create a new null cell of the appropriate type
+					$castedCell = ValueFactory::constructNull($columnDataType);
+				}
+				else
+				{
+					$cellIsDatelike = in_array($cellValueType->getCode(), array(ValueType::DATE, ValueType::DATETIME, ValueType::TIMEOFDAY));
+					if($cellIsDatelike)
+					{
+						$castedCell = clone $cells[$i];
+						$rawValue = $castedCell->getValue()->getRawValue();
+
+						switch($columnDataType->getCode())
+						{
+							case ValueType::DATE:
+								$castedCell->setValue(new DateValue($rawValue));
+								break;
+							case ValueType::DATETIME:
+								$castedCell->setValue(new DateTimeValue($rawValue));
+								break;
+							case ValueType::TIMEOFDAY:
+								$castedCell->setValue(new TimeOfDayValue($rawValue));
+								break;
+							default:
+								break;
+						}
+					}
+				}
+
+				// If no new cell was created that has been casted to the appropriate
+				// type, there is a ValueType mismatch exception
+				if(! $castedCell)
+					throw new ValueTypeMismatchException($columnDataType, $i);
+
+				// Assign the casted cell to the row
+				$row->setCell($i, $castedCell);
+			}
 		}
 
 		// Add the row to the table

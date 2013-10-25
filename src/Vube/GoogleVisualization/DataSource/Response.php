@@ -66,6 +66,10 @@ class Response {
 		$this->data = $data;
 	}
 
+	/**
+	 * @param string $reasonTypeCode
+	 * @param string $description
+	 */
 	public function setErrorResponse($reasonTypeCode = ReasonType::INTERNAL_ERROR, $description = '')
 	{
 		$statusType = new StatusType(StatusType::ERROR);

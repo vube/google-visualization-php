@@ -15,17 +15,28 @@ use Vube\GoogleVisualization\DataSource\Date;
  */
 class TimeOfDayValue extends Value {
 
-	public function __construct(Date $value)
+	/**
+	 * @param Date|string|int $value
+	 */
+	public function __construct($value)
 	{
+		if($value !== null && ! $value instanceof Date)
+			$value = new Date($value);
+
 		parent::__construct($value, ValueType::TIMEOFDAY);
 	}
 
 	public function __toString()
 	{
-		$output = $this->value->format("H:i:s");
-		$millis = $this->value->getMilliseconds();
-		if($millis > 0)
-			$output .= ".".sprintf("%03d", $millis);
+		if($this->value === null)
+			$output = "null";
+		else
+		{
+			$output = $this->value->format("H:i:s");
+			$micros = $this->value->getMicroseconds();
+			if($micros > 0)
+				$output .= ".".sprintf("%06d", $micros);
+		}
 		return $output;
 	}
 }

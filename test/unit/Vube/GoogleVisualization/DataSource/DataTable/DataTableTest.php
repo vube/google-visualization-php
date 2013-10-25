@@ -11,9 +11,13 @@ use Vube\GoogleVisualization\DataSource\DataTable\ColumnDescription;
 use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
 use Vube\GoogleVisualization\DataSource\DataTable\TableCell;
 use Vube\GoogleVisualization\DataSource\DataTable\TableRow;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateTimeValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\TextValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\TimeOfDayValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
+use Vube\GoogleVisualization\DataSource\Date;
 
 
 /**
@@ -290,6 +294,49 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 
 		$this->setExpectedException('\\Vube\\GoogleVisualization\\DataSource\\Exception\\NoSuchColumnIdException');
 		$index = $data->getColumnIndex('no-such-column');
+	}
+
+	public function testAutoDateTimeToDateCast()
+	{
+		$data = new DataTable();
+		$data->addColumn(new ColumnDescription('date', ValueType::DATE));
+		$row = new TableRow();
+		$row->addCell(new TableCell(new DateTimeValue(new Date())));
+		$data->addRow($row);
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof DateValue, "expect a DateValue in the table");
+	}
+
+	public function testAutoDateTimeToTimeOfDayCast()
+	{
+		$data = new DataTable();
+		$data->addColumn(new ColumnDescription('timeofday', ValueType::TIMEOFDAY));
+		$row = new TableRow();
+		$row->addCell(new TableCell(new DateTimeValue(new Date())));
+		$data->addRow($row);
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof TimeOfDayValue, "expect a TimeOfDayValue in the table");
+	}
+
+	public function testNullCellTypeCast()
+	{
+		$data = new DataTable();
+		// a number column
+		$data->addColumn(new ColumnDescription('val', ValueType::NUMBER));
+		// add a NULL string value to the number column
+		$row = new TableRow();
+		$row->addCell(new TextValue(null));
+		$data->addRow($row);
+		// It should have been casted to a NULL number value
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof NumberValue, "expect a TimeOfDayValue in the table");
+		$this->assertTrue($value->isNull(), "expect value->isNull == true");
 	}
 
 	public function testDataTableCustomProperties()

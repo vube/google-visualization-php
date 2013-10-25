@@ -27,7 +27,14 @@ class TableRow
 	 */
 	private $customProperties = array();
 
-	public function __construct() {}
+	/**
+	 * Constructor
+	 * @param array $cells List of TableCell to add to this row
+	 */
+	public function __construct($cells = array())
+	{
+		$this->addCells($cells);
+	}
 
 	/**
 	 * @return array
@@ -68,6 +75,15 @@ class TableRow
 
 		$this->cells[] = $cell;
 		$this->numCells++;
+	}
+
+	/**
+	 * @param array $cells List of TableCell|mixed
+	 */
+	public function addCells($cells)
+	{
+		foreach($cells as $cell)
+			$this->addCell($cell);
 	}
 
 	/**
