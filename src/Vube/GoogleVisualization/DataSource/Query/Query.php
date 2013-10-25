@@ -27,7 +27,7 @@ class Query {
 	 */
 	private $pivot = null;
 
-	public function __construct($text)
+	public function __construct($text = null)
 	{
 		if($text === '')
 			$text = null;

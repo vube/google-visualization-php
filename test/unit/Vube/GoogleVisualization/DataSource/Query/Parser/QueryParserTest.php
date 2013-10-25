@@ -17,6 +17,7 @@ class QueryParserTest extends \PHPUnit_Framework_TestCase {
 		$selection = $parser->readSelect($text);
 
 		$this->assertSame(1, $selection->getNumberOfColumns());
+		$this->assertSame(null, $selection->getColumnFunction(0));
 		$this->assertSame('foo', $selection->getColumnText(0));
 		$this->assertSame(null, $selection->getColumnLabel(0));
 		$this->assertSame("", $text, "Text should now be empty");
@@ -29,7 +30,8 @@ class QueryParserTest extends \PHPUnit_Framework_TestCase {
 		$selection = $parser->readSelect($text);
 
 		$this->assertSame(1, $selection->getNumberOfColumns());
-		$this->assertSame('sum(foo)', $selection->getColumnText(0));
+		$this->assertSame('sum', $selection->getColumnFunction(0));
+		$this->assertSame('foo', $selection->getColumnText(0));
 		$this->assertSame(null, $selection->getColumnLabel(0));
 		$this->assertSame("", $text, "Text should now be empty");
 	}
@@ -41,6 +43,7 @@ class QueryParserTest extends \PHPUnit_Framework_TestCase {
 		$selection = $parser->readSelect($text);
 
 		$this->assertSame(1, $selection->getNumberOfColumns());
+		$this->assertSame(null, $selection->getColumnFunction(0));
 		$this->assertSame('foo', $selection->getColumnText(0));
 		$this->assertSame('FOO', $selection->getColumnLabel(0));
 		$this->assertSame("", $text, "Text should now be empty");
@@ -53,11 +56,14 @@ class QueryParserTest extends \PHPUnit_Framework_TestCase {
 		$selection = $parser->readSelect($text);
 
 		$this->assertSame(3, $selection->getNumberOfColumns());
+		$this->assertSame(null, $selection->getColumnFunction(0));
 		$this->assertSame('foo', $selection->getColumnText(0));
 		$this->assertSame('FOO', $selection->getColumnLabel(0));
-		$this->assertSame('min(bar)', $selection->getColumnText(1));
+		$this->assertSame('min', $selection->getColumnFunction(1));
+		$this->assertSame('bar', $selection->getColumnText(1));
 		$this->assertSame('Min bar', $selection->getColumnLabel(1));
-		$this->assertSame('avg(baz)', $selection->getColumnText(2));
+		$this->assertSame('avg', $selection->getColumnFunction(2));
+		$this->assertSame('baz', $selection->getColumnText(2));
 		$this->assertSame('Average baz', $selection->getColumnLabel(2));
 		$this->assertSame("", $text, "Text should now be empty");
 	}

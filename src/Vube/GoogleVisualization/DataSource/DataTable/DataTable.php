@@ -25,8 +25,17 @@ use Vube\GoogleVisualization\DataSource\Exception\ValueTypeMismatchException;
  */
 class DataTable
 {
+	/**
+	 * @var array
+	 */
 	private $columns = array();
+	/**
+	 * @var array
+	 */
 	private $rows = array();
+	/**
+	 * @var array
+	 */
 	private $warnings = array();
 	/**
 	 * @var array

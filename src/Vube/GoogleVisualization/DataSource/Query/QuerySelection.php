@@ -17,11 +17,12 @@ class QuerySelection {
 	private $numCols = 0;
 	private $columns = array();
 
-	public function addColumn($text, $label = null)
+	public function addColumn($text, $label = null, $func = null)
 	{
 		$this->columns[] = array(
 			'text' => $text,
 			'label' => $label,
+			'func' => $func,
 		);
 		$this->numCols++;
 	}
@@ -43,5 +44,21 @@ class QuerySelection {
 		if($index >= $this->numCols)
 			throw new IndexOutOfBoundsException($index);
 		return $this->columns[$index]['label'];
+	}
+
+	public function getColumnFunction($index)
+	{
+		if($index >= $this->numCols)
+			throw new IndexOutOfBoundsException($index);
+		return $this->columns[$index]['func'];
+	}
+
+	public function getAllColumnIds()
+	{
+		$names = array();
+		foreach($this->columns as $column)
+			$names[$column['text']] = 1;
+		$names = array_keys($names);
+		return $names;
 	}
 }

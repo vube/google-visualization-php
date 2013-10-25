@@ -78,7 +78,7 @@ class QueryParser {
 		$selection = new QuerySelection();
 		$workingText = $match[1];
 
-		$functionName = "(sum|avg|min|max|count)";
+		$functionName = "(?<func>sum|avg|min|max|count)";
 		$rawName = "[a-z][a-z0-9_]*";
 		$backtickedName = "`[^`]+`";
 		$doubleQuotedName = '"(?:\\\\.|[^\\\\"])*"';
@@ -86,8 +86,17 @@ class QueryParser {
 		// Expect field id
 		$expectFields = true;
 		while($expectFields &&
-			preg_match("/(?<column>$functionName\(($backtickedName|$rawName|\*)\)|$backtickedName|$rawName|\*)(\s+(?<label>$doubleQuotedName))?(?<comma>\s*,\s*)?(?<end>.*)/i", $workingText, $match))
+			preg_match("/($functionName\()?(?<column>$backtickedName|$rawName|\*)(?<closingParen>\))?(\s+(?<label>$doubleQuotedName))?(?<comma>\s*,\s*)?(?<end>.*)/i", $workingText, $match))
 		{
+			// If there is no func(field) specified, set $func=null
+			if($match['func'] === '')
+				$func = null;
+			// Else if there is func(field but no ")", throw exception
+			else if($match['closingParen'] === '')
+				throw new InvalidQueryException("Unclosed parenthesis near: ".$workingText);
+			else // There is func(field), remember the func
+				$func = $match['func'];
+
 			$columnEntity = new QuotedEntity($match['column']);
 			$columnName = $columnEntity->getText();
 
@@ -99,7 +108,7 @@ class QueryParser {
 				$label = $labelEntity->getText();
 			}
 
-			$selection->addColumn($columnName, $label);
+			$selection->addColumn($columnName, $label, $func);
 			$workingText = $match['end'];
 
 			// Keep looking for fields if we found a comma at the end of this field
