@@ -117,8 +117,6 @@ class QueryEngineTest extends \PHPUnit_Framework_TestCase {
 		$query = Query::constructFromString($text);
 		$result =& QueryEngine::execute($query, $this->dataTable);
 
-		var_export($result);
-
 		$expected = 7;
 		$actual = $result->getNumberOfColumns();
 		$this->assertSame($expected, $actual, "Expect day column plus 1 for each country+region pair == 7");
