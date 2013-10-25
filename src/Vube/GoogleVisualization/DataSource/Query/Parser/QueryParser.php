@@ -69,6 +69,7 @@ class QueryParser {
 	/**
 	 * @param string &$text [IN] [OUT] The select command is removed from the string
 	 * @return QuerySelection|null
+	 * @throws InvalidQueryException
 	 */
 	public function readSelect(&$text)
 	{
@@ -131,6 +132,10 @@ class QueryParser {
 			throw new NotImplementedException();
 	}
 
+	/**
+	 * @param string &$text [IN] [OUT] The select command is removed from the string
+	 * @return QuerySelection|null
+	 */
 	public function readPivot(&$text)
 	{
 		if(! preg_match("/^\s*pivot\s+(.+)/i", $text, $match))

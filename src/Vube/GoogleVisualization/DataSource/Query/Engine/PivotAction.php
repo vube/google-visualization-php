@@ -11,6 +11,10 @@ use Vube\GoogleVisualization\DataSource\DataTable\TableRow;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueFactory;
 use Vube\GoogleVisualization\DataSource\Query\AggregationType;
 use Vube\GoogleVisualization\DataSource\Query\PivotDescription;
+use Vube\GoogleVisualization\DataSource\Query\ScalarFunction\AverageDataContainer;
+use Vube\GoogleVisualization\DataSource\Query\ScalarFunction\CountDataContainer;
+use Vube\GoogleVisualization\DataSource\Query\ScalarFunction\MaxDataContainer;
+use Vube\GoogleVisualization\DataSource\Query\ScalarFunction\MinDataContainer;
 use Vube\GoogleVisualization\DataSource\Query\ScalarFunction\SumDataContainer;
 use Vube\GoogleVisualization\DataSource\Query\Exception\NotImplementedException;
 
@@ -131,8 +135,11 @@ class PivotAction {
 				$fieldId = $dataColumnDescription->getId();
 				$fieldLabel = $dataColumnDescription->getLabel();
 
+				$aggregationType = $this->pivotDescription->getAggregationType($fieldId);
+
 				$id = implode("__", $idParts) . "__" . $fieldId;
-				$label = implode(" ", $labelParts) . " " . $fieldLabel;
+				$label = ($aggregationType ? $aggregationType->getCode().' ' : '') .
+					implode(" ", $labelParts) . " " . $fieldLabel;
 
 				// For now copy the same type as the input column.
 				// In the future we may need to set this explicitly based on the calculation.
@@ -253,23 +260,28 @@ class PivotAction {
 	{
 		$data =& $this->pivotDescription->getDataTable();
 		$column = $data->getColumnDescription($dataColumnIndex);
-		$dataFieldName = $column->getId();
+		$dataFieldId = $column->getId();
 
-		$aggregationType = $this->pivotDescription->getAggregationType($dataFieldName);
-		switch($aggregationType)
+		$aggregationType = $this->pivotDescription->getAggregationType($dataFieldId);
+		$aggregationTypeCode = $aggregationType ? $aggregationType->getCode() : null;
+		switch($aggregationTypeCode)
 		{
 			case AggregationType::AVG:
+				return new AverageDataContainer();
+
 			case AggregationType::MIN:
+				return new MinDataContainer();
+
 			case AggregationType::MAX:
+				return new MaxDataContainer();
+
 			case AggregationType::COUNT:
-				throw new NotImplementedException();
+				return new CountDataContainer();
 
 			case AggregationType::SUM:
 			default: // e.g. null (no specified aggregation type)
-				$container = new SumDataContainer();
-				break;
+				return new SumDataContainer();
 		}
-		return $container;
 	}
 
 	/**

@@ -10,12 +10,13 @@ use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 
 
 /**
- * SumDataContainer class
+ * AverageDataContainer class
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class SumDataContainer implements iDataContainer {
+class AverageDataContainer implements iDataContainer {
 
+	private $numCells = 0;
 	private $totalValue = 0;
 
 	/**
@@ -23,6 +24,7 @@ class SumDataContainer implements iDataContainer {
 	 */
 	public function addCell(TableCell $cell)
 	{
+		$this->numCells++;
 		$this->totalValue += $cell->getValue()->getRawValue();
 	}
 
@@ -31,6 +33,6 @@ class SumDataContainer implements iDataContainer {
 	 */
 	public function getComputedValue()
 	{
-		return new NumberValue($this->totalValue);
+		return new NumberValue($this->totalValue / $this->numCells);
 	}
 }

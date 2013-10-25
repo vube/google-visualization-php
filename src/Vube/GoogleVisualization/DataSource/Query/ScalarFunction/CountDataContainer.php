@@ -10,20 +10,20 @@ use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 
 
 /**
- * SumDataContainer class
+ * CountDataContainer class
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class SumDataContainer implements iDataContainer {
+class CountDataContainer implements iDataContainer {
 
-	private $totalValue = 0;
+	private $count = 0;
 
 	/**
 	 * @param TableCell $cell
 	 */
 	public function addCell(TableCell $cell)
 	{
-		$this->totalValue += $cell->getValue()->getRawValue();
+		$this->count++;
 	}
 
 	/**
@@ -31,6 +31,6 @@ class SumDataContainer implements iDataContainer {
 	 */
 	public function getComputedValue()
 	{
-		return new NumberValue($this->totalValue);
+		return new NumberValue($this->count);
 	}
 }

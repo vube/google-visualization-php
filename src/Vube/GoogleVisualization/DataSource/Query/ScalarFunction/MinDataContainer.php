@@ -10,20 +10,28 @@ use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 
 
 /**
- * SumDataContainer class
+ * MinDataContainer class
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class SumDataContainer implements iDataContainer {
+class MinDataContainer implements iDataContainer {
 
-	private $totalValue = 0;
+	private $min = null;
 
 	/**
 	 * @param TableCell $cell
 	 */
 	public function addCell(TableCell $cell)
 	{
-		$this->totalValue += $cell->getValue()->getRawValue();
+		if(! $cell->getValue()->isNull())
+		{
+			$value = $cell->getValue()->getRawValue();
+
+			if($this->min > $value)
+				$this->min = $value;
+			else if($this->min === null)
+				$this->min = $value;
+		}
 	}
 
 	/**
@@ -31,6 +39,6 @@ class SumDataContainer implements iDataContainer {
 	 */
 	public function getComputedValue()
 	{
-		return new NumberValue($this->totalValue);
+		return new NumberValue($this->min);
 	}
 }

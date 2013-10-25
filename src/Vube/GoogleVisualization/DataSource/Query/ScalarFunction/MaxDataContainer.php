@@ -10,20 +10,28 @@ use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 
 
 /**
- * SumDataContainer class
+ * MaxDataContainer class
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class SumDataContainer implements iDataContainer {
+class MaxDataContainer implements iDataContainer {
 
-	private $totalValue = 0;
+	private $max = null;
 
 	/**
 	 * @param TableCell $cell
 	 */
 	public function addCell(TableCell $cell)
 	{
-		$this->totalValue += $cell->getValue()->getRawValue();
+		if(! $cell->getValue()->isNull())
+		{
+			$value = $cell->getValue()->getRawValue();
+
+			if($this->max < $value)
+				$this->max = $value;
+			else if($this->max === null)
+				$this->max = $value;
+		}
 	}
 
 	/**
@@ -31,6 +39,6 @@ class SumDataContainer implements iDataContainer {
 	 */
 	public function getComputedValue()
 	{
-		return new NumberValue($this->totalValue);
+		return new NumberValue($this->max);
 	}
 }

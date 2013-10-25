@@ -10,6 +10,7 @@ use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
 use Vube\GoogleVisualization\DataSource\DataTable\TableRow;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
 use Vube\GoogleVisualization\DataSource\Date;
+use Vube\GoogleVisualization\DataSource\Query\AggregationType;
 use Vube\GoogleVisualization\DataSource\Query\Engine\PivotAction;
 use Vube\GoogleVisualization\DataSource\Query\PivotDescription;
 
@@ -42,14 +43,15 @@ class PivotActionTest extends \PHPUnit_Framework_TestCase {
 		$data->addColumn(new ColumnDescription('expense', ValueType::NUMBER, 'Expense'));
 
 		// DO NOT change the order of this stuff it will break the tests
+		// DO NOT change the income values it will break the tests
 		$rawData = array(
-			array(new Date('2013-10-01'), 'US', 'TX', 1000, 900),
-			array(new Date('2013-10-01'), 'US', 'CA', 1000, 900),
+			array(new Date('2013-10-01'), 'US', 'TX', 1500, 900),
+			array(new Date('2013-10-01'), 'US', 'CA', 2000, 900),
 			array(new Date('2013-10-01'), 'US', 'WA', 1000, 900),
-			array(new Date('2013-10-02'), 'US', 'TX', 1000, 900),
-			array(new Date('2013-10-02'), 'US', 'WA', 1000, 900),
-			array(new Date('2013-10-03'), 'US', 'TX', 1000, 900),
-			array(new Date('2013-10-03'), 'US', 'WA', 1000, 900),
+			array(new Date('2013-10-02'), 'US', 'TX', 1400, 900),
+			array(new Date('2013-10-02'), 'US', 'WA', 1100, 900),
+			array(new Date('2013-10-03'), 'US', 'TX', 1600, 900),
+			array(new Date('2013-10-03'), 'US', 'WA', 1200, 900),
 		);
 
 		foreach($rawData as $row)
@@ -150,7 +152,90 @@ class PivotActionTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertSame($expected, $actual,
 			"Number of output rows must match expected");
-
-//		var_export($data);
 	}
+
+	public function testAggregateSum()
+	{
+		$pivotDescription = new PivotDescription($this->dataTable, array('country'));
+		$pivotDescription->addDataField('income', AggregationType::SUM);
+		$pivotAction = new PivotAction($pivotDescription);
+		$data =& $pivotAction->execute();
+
+		$this->assertSame(2, $data->getNumberOfColumns());
+		$this->assertSame(3, $data->getNumberOfRows());
+
+		$col1 = $data->getColumnDescription(1);
+		$this->assertSame('sum US Income', $col1->getLabel());
+		$this->assertSame(4500, $data->getRow(0)->getCell(1)->getValue()->getRawValue(),
+			"Expect sum(income) = 4500");
+	}
+
+	public function testAggregateAverage()
+	{
+		$pivotDescription = new PivotDescription($this->dataTable, array('country'));
+		$pivotDescription->addDataField('income', AggregationType::AVG);
+		$pivotAction = new PivotAction($pivotDescription);
+		$data =& $pivotAction->execute();
+
+		$this->assertSame(2, $data->getNumberOfColumns());
+		$this->assertSame(3, $data->getNumberOfRows());
+
+		$col1 = $data->getColumnDescription(1);
+		$this->assertSame('avg US Income', $col1->getLabel());
+		$this->assertSame(1500, $data->getRow(0)->getCell(1)->getValue()->getRawValue(),
+			"Expect avg(income) = 1500");
+	}
+
+	public function testAggregateMin()
+	{
+		$pivotDescription = new PivotDescription($this->dataTable, array('country'));
+		$pivotDescription->addDataField('income', AggregationType::MIN);
+		$pivotAction = new PivotAction($pivotDescription);
+		$data =& $pivotAction->execute();
+
+		$this->assertSame(2, $data->getNumberOfColumns());
+		$this->assertSame(3, $data->getNumberOfRows());
+
+		$col1 = $data->getColumnDescription(1);
+		$this->assertSame('min US Income', $col1->getLabel());
+		$this->assertSame(1000, $data->getRow(0)->getCell(1)->getValue()->getRawValue(),
+			"Expect min(income) = 1000");
+	}
+
+	public function testAggregateMax()
+	{
+		$pivotDescription = new PivotDescription($this->dataTable, array('country'));
+		$pivotDescription->addDataField('income', AggregationType::MAX);
+		$pivotAction = new PivotAction($pivotDescription);
+		$data =& $pivotAction->execute();
+
+		$this->assertSame(2, $data->getNumberOfColumns());
+		$this->assertSame(3, $data->getNumberOfRows());
+
+		$col1 = $data->getColumnDescription(1);
+		$this->assertSame('max US Income', $col1->getLabel());
+		$this->assertSame(2000, $data->getRow(0)->getCell(1)->getValue()->getRawValue(),
+			"Expect max(income) = 2000");
+	}
+
+	public function testAggregateCount()
+	{
+		$pivotDescription = new PivotDescription($this->dataTable, array('country'));
+		$pivotDescription->addDataField('income', AggregationType::COUNT);
+		$pivotAction = new PivotAction($pivotDescription);
+		$data =& $pivotAction->execute();
+
+		$this->assertSame(2, $data->getNumberOfColumns());
+		$this->assertSame(3, $data->getNumberOfRows());
+
+		$col1 = $data->getColumnDescription(1);
+		$this->assertSame('count US Income', $col1->getLabel());
+		$this->assertSame(3, $data->getRow(0)->getCell(1)->getValue()->getRawValue(),
+			"Expect count(income) = 3 for US on day 1");
+		$this->assertSame(2, $data->getRow(1)->getCell(1)->getValue()->getRawValue(),
+			"Expect count(income) = 2 for US on day 2");
+		$this->assertSame(2, $data->getRow(2)->getCell(1)->getValue()->getRawValue(),
+			"Expect count(income) = 2 for US on day 3");
+	}
+
 }
