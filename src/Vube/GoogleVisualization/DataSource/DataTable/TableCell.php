@@ -101,7 +101,7 @@ class TableCell
 		if($value instanceof Date)
 			return new DateValue($value);
 
-		if(is_string($value))
+		if(is_string($value) || $value === null)
 			return new TextValue($value);
 
 		throw new TypeMismatchException(array('int','float','bool','Date','string'), $value);

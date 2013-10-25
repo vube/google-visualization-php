@@ -86,8 +86,10 @@ class TableCellTest extends \PHPUnit_Framework_TestCase
 
 	public function testImplicitValueTypeNull()
 	{
-		$this->setExpectedException('\\Vube\\GoogleVisualization\\DataSource\\Exception\\TypeMismatchException');
 		$cell = new TableCell(null);
+		$value = $cell->getValue();
+		$this->assertTrue($value instanceof TextValue, "Expected null to cast to a TextValue");
+		$this->assertTrue($value->isNull(), "Expected isNull==true for null value");
 	}
 
 	public function testImplicitValueTypeUnknownClass()

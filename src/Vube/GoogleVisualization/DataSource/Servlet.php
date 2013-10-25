@@ -8,6 +8,8 @@ namespace Vube\GoogleVisualization\DataSource;
 use Vube\GoogleVisualization\DataSource\Base\ReasonType;
 use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
 use Vube\GoogleVisualization\DataSource\Exception\AccessDeniedException;
+use Vube\GoogleVisualization\DataSource\Query\Engine\QueryEngine;
+use Vube\GoogleVisualization\DataSource\Query\Query;
 
 
 /**
@@ -33,7 +35,7 @@ abstract class Servlet {
 	 * @param Request $request
 	 * @return DataTable
 	 */
-	abstract public function getDataTable(Request $request);
+	abstract public function & getDataTable(Request $request);
 
 	/**
 	 * Constructor
@@ -91,7 +93,7 @@ abstract class Servlet {
 		}
 		catch(\Exception $e)
 		{
-			$response->setErrorResponse(ReasonType::INTERNAL_ERROR);
+			$response->setErrorResponse(ReasonType::INTERNAL_ERROR, $e->getMessage());
 		}
 		return $response;
 	}
@@ -115,13 +117,17 @@ abstract class Servlet {
 		$request = $response->getRequest();
 
 		// Verify that the user is granted access to the data
-
 		if($this->isRestrictedAccessMode())
 			$this->verifyAccessAllowed($request->getOutputType());
 
 		// Populate the data
+		$data =& $this->getDataTable($request);
 
-		$data = $this->getDataTable($request);
+		// Apply query, if any
+		$query = Query::constructFromString($request->getQuery());
+		if(! $query->isEmpty())
+			$data =& QueryEngine::execute($query, $data);
+
 		$response->setDataTable($data);
 	}
 

@@ -1,19 +1,19 @@
 <?php
 /**
- * Simple Example Servlet class
+ * Query Example Servlet class
  *
  * This class creates a DataTable with static data.  You should
  * obviously update this to get the data from your source.
+ *
+ * This creates a data table with multiple row and column fields
+ * to demonstrate the pivot capabilities of this library.
  *
  * @author Ross Perkins <ross@vubeology.com>
  */
 
 use Vube\GoogleVisualization\DataSource\DataTable\ColumnDescription;
 use Vube\GoogleVisualization\DataSource\DataTable\DataTable;
-use Vube\GoogleVisualization\DataSource\DataTable\TableCell;
 use Vube\GoogleVisualization\DataSource\DataTable\TableRow;
-use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
-use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
 use Vube\GoogleVisualization\DataSource\Date;
 use Vube\GoogleVisualization\DataSource\Request;
@@ -24,7 +24,7 @@ use Vube\GoogleVisualization\DataSource\Servlet;
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class MyServlet extends Servlet {
+class MyQueryServlet extends Servlet {
 
 	/**
 	 * Constructor
@@ -45,29 +45,36 @@ class MyServlet extends Servlet {
 	 * @param Request $request
 	 * @return DataTable
 	 */
-	public function getDataTable(Request $request)
+	public function & getDataTable(Request $request)
 	{
 		$data = new DataTable();
 
 		$data->addColumn(new ColumnDescription('date', ValueType::DATE, 'Date'));
-		$data->addColumn(new ColumnDescription('income', ValueType::NUMBER, 'Gross Income'));
-		$data->addColumn(new ColumnDescription('expense', ValueType::NUMBER, 'Expenses'));
-		$data->addColumn(new ColumnDescription('net', ValueType::NUMBER, 'Net Income'));
+		$data->addColumn(new ColumnDescription('country', ValueType::STRING, 'Country'));
+		$data->addColumn(new ColumnDescription('region', ValueType::STRING, 'Region'));
+		$data->addColumn(new ColumnDescription('income', ValueType::NUMBER, 'Income'));
+		$data->addColumn(new ColumnDescription('expense', ValueType::NUMBER, 'Expense'));
+
+		$countryRegions = array(
+			'US' => array('TX', 'CA', 'WA'),
+			'CA' => array(null),
+		);
 
 		for($i=0; $i<10; $i++)
 		{
-			$row = new TableRow();
-
 			$date = "2013-01-".sprintf("%02d",1+$i);
-			$income = 1000+rand(0,(1+$i)*10);
-			$expense = -800-rand(0,(1+$i)*10);
 
-			$row->addCell(new TableCell(new DateValue(new Date($date))));
-			$row->addCell(new TableCell(new NumberValue($income)));
-			$row->addCell(new TableCell(new NumberValue($expense)));
-			$row->addCell(new TableCell(new NumberValue($income+$expense)));
+			foreach($countryRegions as $country => $regions)
+			{
+				foreach($regions as $region)
+				{
+					$income = 1000+rand(0,(1+$i)*10);
+					$expense = -800-rand(0,(1+$i)*10);
 
-			$data->addRow($row);
+					$row = new TableRow(array(new Date($date), $country, $region, $income, $expense));
+					$data->addRow($row);
+				}
+			}
 		}
 
 		return $data;
