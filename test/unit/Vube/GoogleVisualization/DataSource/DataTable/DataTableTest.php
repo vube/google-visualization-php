@@ -336,6 +336,34 @@ class DataTableTest extends \PHPUnit_Framework_TestCase
 			"Expect the casted date to be the same as the input value");
 	}
 
+	public function testAutoIntStringToNumberCast()
+	{
+		$text = '123'; // a string representation of number, NOT a int
+		$data = new DataTable();
+		$data->addColumn(new ColumnDescription('value', ValueType::NUMBER));
+		$data->addRow(new TableRow(array($text)));
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof NumberValue, "expect a NumberValue in the table");
+		$this->assertEquals(intval($text), $value->getRawValue(),
+			"Expect the casted value to be the same as the input value");
+	}
+
+	public function testAutoFloatStringToNumberCast()
+	{
+		$text = '1.23'; // a string representation of number, NOT a float
+		$data = new DataTable();
+		$data->addColumn(new ColumnDescription('value', ValueType::NUMBER));
+		$data->addRow(new TableRow(array($text)));
+		$value = $data->getRow(0)->getCell(0)->getValue();
+
+		$this->assertSame(1, $data->getNumberOfRows(), "row count must match");
+		$this->assertTrue($value instanceof NumberValue, "expect a NumberValue in the table");
+		$this->assertEquals(floatval($text), $value->getRawValue(),
+			"Expect the casted value to be the same as the input value");
+	}
+
 	public function testNullCellTypeCast()
 	{
 		$data = new DataTable();

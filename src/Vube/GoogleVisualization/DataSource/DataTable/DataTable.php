@@ -6,8 +6,10 @@
 namespace Vube\GoogleVisualization\DataSource\DataTable;
 
 use Vube\GoogleVisualization\DataSource\Base\Warning;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\BooleanValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\DateTimeValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\DateValue;
+use Vube\GoogleVisualization\DataSource\DataTable\Value\NumberValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\TimeOfDayValue;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueFactory;
 use Vube\GoogleVisualization\DataSource\DataTable\Value\ValueType;
@@ -15,6 +17,7 @@ use Vube\GoogleVisualization\DataSource\Exception;
 use Vube\GoogleVisualization\DataSource\Exception\ColumnCountMismatchException;
 use Vube\GoogleVisualization\DataSource\Exception\IndexOutOfBoundsException;
 use Vube\GoogleVisualization\DataSource\Exception\NoSuchColumnIdException;
+use Vube\GoogleVisualization\DataSource\Exception\NotImplementedException;
 use Vube\GoogleVisualization\DataSource\Exception\ValueTypeMismatchException;
 
 
@@ -91,6 +94,10 @@ class DataTable
 
 	/**
 	 * @param TableRow $row
+	 * @throws ColumnCountMismatchException
+	 * @throws Exception
+	 * @throws NotImplementedException
+	 * @throws ValueTypeMismatchException
 	 */
 	public function addRow(TableRow $row)
 	{
@@ -121,37 +128,60 @@ class DataTable
 				if($cellValue->isNull())
 				{
 					// Create a new null cell of the appropriate type
-					$castedCell = ValueFactory::constructNull($columnDataType);
+					$castedCell = clone $cells[$i];
+					$castedCell->setValue(ValueFactory::constructNull($columnDataType));
 				}
-				else
+				else if($columnDataType->getCode() == ValueType::BOOLEAN)
 				{
-					// If this column is supposed to have a date, be pretty flexible
+					switch($cellValueType->getCode())
+					{
+						case ValueType::STRING:
+							$bool = $cellValue->getRawValue() === 'true';
+							$castedCell = clone $cells[$i];
+							$castedCell->setValue(new BooleanValue($bool));
+							break;
+						default:
+							break;
+					}
+				}
+				else if($columnDataType->getCode() == ValueType::NUMBER)
+				{
+					switch($cellValueType->getCode())
+					{
+						case ValueType::STRING:
+							$castedCell = clone $cells[$i];
+							$castedCell->setValue(new NumberValue($cellValue->getRawValue()));
+							break;
+						default:
+							break;
+					}
+				}
+				else if($columnDataType->isDateValue())
+				{
+					// This column is supposed to have a date, be pretty flexible
 					// what kind of input data we have.
 					//
 					// Cast from whatever types we can to the date type.  This may be
 					// casting from a string to a date, or casting from one type of
 					// date value to another.
 
-					$cellIsDatelike = $cellValueType->isDateValue() || $columnDataType->isDateValue();
-					if($cellIsDatelike)
-					{
-						$castedCell = clone $cells[$i];
-						$rawValue = $castedCell->getValue()->getRawValue();
+					$castedCell = clone $cells[$i];
+					$rawValue = $cellValue->getRawValue();
 
-						switch($columnDataType->getCode())
-						{
-							case ValueType::DATE:
-								$castedCell->setValue(new DateValue($rawValue));
-								break;
-							case ValueType::DATETIME:
-								$castedCell->setValue(new DateTimeValue($rawValue));
-								break;
-							case ValueType::TIMEOFDAY:
-								$castedCell->setValue(new TimeOfDayValue($rawValue));
-								break;
-							default:
-								break;
-						}
+					switch($columnDataType->getCode())
+					{
+						case ValueType::DATE:
+							$castedCell->setValue(new DateValue($rawValue));
+							break;
+						case ValueType::DATETIME:
+							$castedCell->setValue(new DateTimeValue($rawValue));
+							break;
+						case ValueType::TIMEOFDAY:
+							$castedCell->setValue(new TimeOfDayValue($rawValue));
+							break;
+						default:
+							throw new NotImplementedException("Not Implemented: Some sort of new date type?");
+							break;
 					}
 				}
 
