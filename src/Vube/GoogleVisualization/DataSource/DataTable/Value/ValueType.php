@@ -33,6 +33,10 @@ class ValueType
 
 	private $code;
 
+	/**
+	 * @param ValueType|int $code
+	 * @throws NoSuchValueTypeException
+	 */
 	public function __construct($code)
 	{
 		if($code instanceof ValueType)
@@ -54,5 +58,19 @@ class ValueType
 	public function getTypeName()
 	{
 		return self::$typeNames[$this->code];
+	}
+
+	/**
+	 * @return bool TRUE if this value is a type of date
+	 */
+	public function isDateValue()
+	{
+		switch($this->code)
+		{
+			case self::DATE: case self::DATETIME: case self::TIMEOFDAY:
+				return true;
+			default:
+				return false;
+		}
 	}
 }
